@@ -189,7 +189,8 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
         scale: 2, 
         backgroundColor: null, 
         logging: false,
-        scrollY: -window.scrollY
+        scrollX: 0,
+        scrollY: 0
       });
       const dataUrl = canvas.toDataURL('image/png');
       const downloadLink = document.createElement('a');
@@ -240,49 +241,108 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
         🏆 모든 학과 탐험 완료! 수고 많았어 친구! 네 강점을 가득 담은 진단서가 발급되었어.
       </div>
 
-      {/* 최종 추천 학과 카드 래퍼 (공유 이미지 기반으로 변경) */}
-      <div 
-        ref={cardRef} 
-        className="share-card-container"
-        style={{
-          backgroundImage: `url(${DEPT_SHARE_IMAGES[recommendedDept.id].img})`,
-        }}
-      >
-        {/* 중앙 상단 문구 */}
-        <div className="share-card-title">
-          <span style={{ color: recommendedDept.color.primary }}>
-            {DEPT_SHARE_IMAGES[recommendedDept.id].shortName}과
-          </span>
-          를 추천합니다!
+      {/* 캡처 전용 숨겨진 카드 (화면 밖 배치) */}
+      <div className="share-card-download-area">
+        <div ref={cardRef} className="share-card-container">
+          <img 
+            src={DEPT_SHARE_IMAGES[recommendedDept.id].img} 
+            alt="background" 
+            className="share-card-bg"
+          />
+          {/* 중앙 상단 문구 */}
+          <div className="share-card-title">
+            <span style={{ color: recommendedDept.color.primary }}>
+              {DEPT_SHARE_IMAGES[recommendedDept.id].shortName}과
+            </span>
+            를 추천합니다!
+          </div>
+
+          {/* 능력치 부분 막대 그래프 */}
+          <div className="share-card-stats">
+            {radarLabels.map((lbl) => {
+              const score = scores[lbl.key] || 0;
+              const percent = Math.min(100, Math.round(score)); 
+              return (
+                <div key={lbl.key} className="share-bar-row">
+                  <span className="share-bar-label">{lbl.name}</span>
+                  <div className="share-bar-track">
+                    <div 
+                      className="share-bar-fill" 
+                      style={{
+                        width: `${percent}%`,
+                        backgroundColor: recommendedDept.color.primary
+                      }}
+                    />
+                  </div>
+                  <span 
+                    className="share-bar-percent" 
+                    style={{ color: recommendedDept.color.primary }}
+                  >
+                    {percent}%
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* 최종 추천 학과 카드 래퍼 (원래 화면 복구) */}
+      <div className="recommended-card-outer-wrap">
+        
+        {/* 캐릭터가 프레임 뒤로 쏙 안착하도록 top 좌표 하향 안정화 적용 */}
+        <div className="result-char-illust-wrap">
+          <img 
+            src={getResultCharacterImage()} 
+            alt={recommendedDept.characterName} 
+            className="result-char-illust-img"
+            draggable={false}
+          />
         </div>
 
-        {/* 능력치 부분 막대 그래프 */}
-        <div className="share-card-stats">
-          {radarLabels.map((lbl) => {
-            const score = scores[lbl.key] || 0;
-            const percent = Math.min(100, Math.round(score)); 
-            return (
-              <div key={lbl.key} className="share-bar-row">
-                <span className="share-bar-label">{lbl.name}</span>
-                <div className="share-bar-track">
-                  <div 
-                    className="share-bar-fill" 
-                    style={{
-                      width: `${percent}%`,
-                      backgroundColor: recommendedDept.color.primary
-                    }}
-                  />
-                </div>
-                <span 
-                  className="share-bar-percent" 
-                  style={{ color: recommendedDept.color.primary }}
-                >
-                  {percent}%
-                </span>
-              </div>
-            );
-          })}
+        {/* 결과 프레임 요약 카드 (배지를 흐름 내부로 합쳐서 정합성 복구) */}
+        <div 
+          className="recommended-dept-card"
+          style={{
+            borderColor: recommendedDept.color.primary,
+            boxShadow: `0 10px 0 ${recommendedDept.color.shadow}`,
+            backgroundColor: recommendedDept.color.light,
+          }}
+        >
+          {/* 📍 겹침을 방지하기 위해 텍스트 흐름에 자연스럽게 합쳐진 전공 배지 */}
+          <div 
+            className="result-tag-merged" 
+            style={{ 
+              backgroundColor: recommendedDept.color.primary,
+              color: '#ffffff'
+            }}
+          >
+            나에게 가장 어울리는 전공
+          </div>
+          
+          <div className="result-sub-type">
+            성격 유형: "{recommendedDept.resultTitle}"
+          </div>
+
+          <h1 className="result-dept-title" style={{ color: recommendedDept.color.primary }}>
+            {recommendedDept.name}
+          </h1>
+
+          <p className="result-dept-desc">
+            {recommendedDept.description}
+          </p>
+
+          {/* 프리미엄 카드 마킹 엠블럼 해시태그 */}
+          <div className="card-mbti-tags">
+            <span className="mbti-tag" style={{ color: recommendedDept.color.primary, backgroundColor: '#ffffff', borderColor: recommendedDept.color.primary }}>
+              # 세경고_추천_1위
+            </span>
+            <span className="mbti-tag" style={{ color: recommendedDept.color.primary, backgroundColor: '#ffffff', borderColor: recommendedDept.color.primary }}>
+              # {recommendedDept.badgeName.split(' ')[1] || '전공'}마스터
+            </span>
+          </div>
         </div>
+
       </div>
 
       {/* 성향 수치 시각화 (레이더 차트 + 백분율 스케일 보정된 바 차트) */}
@@ -435,20 +495,128 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
           line-height: 1.4;
         }
 
-        /* 공유 이미지 기반 카드 컨테이너 스타일 */
-        .share-card-container {
+        /* 캐릭터와 프레임 Z-index 결합 래퍼 */
+        .recommended-card-outer-wrap {
           position: relative;
           width: 100%;
-          max-width: 360px;
-          margin: 0 auto;
-          aspect-ratio: 5206 / 7822;
-          background-size: 100% 100%;
-          background-position: center;
-          background-repeat: no-repeat;
+          margin-top: 44px;
+          padding-top: 110px;
+        }
+
+        /* 캐릭터는 프레임 뒤(z-index: 1)로 배치 */
+        .result-char-illust-wrap {
+          position: absolute;
+          top: -55px;
+          left: 50%;
+          transform: translateX(-50%);
+          height: 220px;
+          width: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: flex-end;
+          z-index: 1; 
+          pointer-events: none;
+        }
+
+        .result-char-illust-img {
+          height: 100%;
+          max-height: 220px;
+          width: auto;
+          object-fit: contain;
+          filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.18));
+        }
+
+        /* 프레임 카드는 z-index: 2로 앞에 노출, 투명하지 않은 배경 */
+        .recommended-dept-card {
+          position: relative;
+          width: 100%;
+          border: 4px solid;
           border-radius: 24px;
-          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+          padding: 28px 20px 24px 20px;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+          z-index: 2; 
+        }
+
+        /* 📍 합쳐져서 내부로 안착된 전공 타이틀 배지 */
+        .result-tag-merged {
+          font-family: var(--font-mitmi), sans-serif;
+          font-size: 15px;
+          font-weight: bold;
+          padding: 6px 20px;
+          border-radius: 20px;
+          margin-bottom: 16px;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+          display: inline-block;
+        }
+
+        .result-sub-type {
+          font-size: 16px;
+          color: #64748b;
+          margin-bottom: 8px;
+        }
+
+        .result-dept-title {
+          font-size: 25px;
+          line-height: 1.2;
+          margin-bottom: 12px;
+          text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .result-dept-desc {
+          font-size: 16px;
+          line-height: 1.5;
+          color: #475569;
+          margin-bottom: 18px;
+        }
+
+        /* 프리미엄 카드 마킹 엠블럼 해시태그 */
+        .card-mbti-tags {
+          display: flex;
+          gap: 8px;
+          justify-content: center;
+          width: 100%;
+        }
+
+        .mbti-tag {
+          font-size: 12px;
+          padding: 4px 10px;
+          border-radius: 20px;
+          border: 1.5px solid;
+          font-family: var(--font-mitmi), sans-serif;
+        }
+
+        /* 캡처 전용 숨겨진 카드 영역 스타일 */
+        .share-card-download-area {
+          position: absolute;
+          top: 0;
+          left: -9999px;
+          width: 540px;
+          height: 810px;
+          z-index: -9999;
+          opacity: 1;
+          pointer-events: none;
+        }
+
+        .share-card-container {
+          position: relative;
+          width: 540px;
+          height: 810px;
           overflow: hidden;
           box-sizing: border-box;
+          background-color: #ffffff;
+        }
+
+        .share-card-bg {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          z-index: 1;
+          object-fit: cover;
         }
 
         .share-card-title {
@@ -457,61 +625,63 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
           left: 50%;
           transform: translateX(-50%);
           font-family: var(--font-mitmi), sans-serif;
-          font-size: 20px;
+          font-size: 30px;
           font-weight: bold;
           color: #1e293b;
           text-align: center;
           white-space: nowrap;
-          text-shadow: 1px 1px 0px #ffffff, -1px -1px 0px #ffffff, 1px -1px 0px #ffffff, -1px 1px 0px #ffffff;
+          text-shadow: 2px 2px 0px #ffffff, -2px -2px 0px #ffffff, 2px -2px 0px #ffffff, -2px 2px 0px #ffffff;
+          z-index: 2;
         }
 
         .share-card-stats {
           position: absolute;
           bottom: 10.5%;
-          left: 12%;
-          right: 12%;
+          left: 10%;
+          right: 10%;
           display: flex;
           flex-direction: column;
-          gap: 6px;
+          gap: 10px;
           box-sizing: border-box;
+          z-index: 2;
         }
 
         .share-bar-row {
           display: flex;
           align-items: center;
           width: 100%;
-          gap: 8px;
+          gap: 12px;
         }
 
         .share-bar-label {
           font-family: var(--font-mitmi), sans-serif;
-          font-size: 12px;
+          font-size: 18px;
           font-weight: bold;
           color: #334155;
-          width: 72px;
+          width: 100px;
           text-align: left;
           text-shadow: 1px 1px 0px #ffffff, -1px -1px 0px #ffffff;
         }
 
         .share-bar-track {
           flex: 1;
-          height: 10px;
+          height: 16px;
           background-color: rgba(226, 232, 240, 0.7);
-          border-radius: 5px;
+          border-radius: 8px;
           overflow: hidden;
           border: 1px solid rgba(203, 213, 225, 0.3);
         }
 
         .share-bar-fill {
           height: 100%;
-          border-radius: 5px;
+          border-radius: 8px;
         }
 
         .share-bar-percent {
           font-family: var(--font-mitmi), sans-serif;
-          font-size: 12px;
+          font-size: 18px;
           font-weight: bold;
-          width: 32px;
+          width: 50px;
           text-align: right;
           text-shadow: 1px 1px 0px #ffffff, -1px -1px 0px #ffffff;
         }
