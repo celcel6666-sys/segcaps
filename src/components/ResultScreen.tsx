@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import html2canvas from 'html2canvas';
-import { DEPARTMENTS, DEUMI_EXPRESSIONS } from '../data/departments';
-import type { Department } from '../data/departments';
+import { DEPARTMENTS, DEUMI_EXPRESSIONS } from '@/data/departments';
+import type { Department } from '@data/departments';
 
 interface ResultScreenProps {
   scores: Record<string, number>;

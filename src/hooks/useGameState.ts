@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
-import { DEPARTMENTS } from '../data/departments';
-import type { Department } from '../data/departments';
+import { DEPARTMENTS } from '@data/departments';
+import type { Department } from '@data/departments';
 import { QUIZZES_DATA } from '../data/quizzes';
 import type { DeptQuizData } from '../data/quizzes';
 
