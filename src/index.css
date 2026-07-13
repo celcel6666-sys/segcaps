@@ -1,0 +1,94 @@
+@font-face {
+  font-family: 'OngeulipMitmi';
+  src: url('./assets/fonts/OngeulipMitmi.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+:root {
+  --primary-color: #3b82f6;
+  --primary-hover: #2563eb;
+  --bg-dark: #0f172a;
+  --text-light: #f8fafc;
+  --font-mitmi: 'OngeulipMitmi', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+  font-family: var(--font-mitmi); /* 모든 노드에 온글잎 폰트 강제 매핑 */
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-user-drag: none;
+}
+
+img {
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+button, input, select, textarea {
+  font-family: var(--font-mitmi), sans-serif; /* 폼 요소 폰트 상속 보장 */
+  user-select: none;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: var(--font-mitmi);
+  background-color: var(--bg-dark);
+  color: var(--text-light);
+  user-select: none;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+}
+
+/* 최상위 앱 컨테이너: 전체 브라우저 화면 가로세로를 100% 빈틈없이 채움 */
+.app-container {
+  position: relative;
+  width: 100%;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+/* 내부 콘텐츠 래퍼: 데스크탑/태블릿에서 중앙에 모바일 크기(max-width 480px)로 콘텐츠를 정렬 */
+.content-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  height: 100%;
+  margin: 0 auto;
+  z-index: 3; /* 배경 이미지와 오버레이보다 무조건 위 */
+  display: flex;
+  flex-direction: column;
+}
+
+/* 미세 페이드인 애니메이션 */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 0.9; }
+  50% { transform: scale(1.05); opacity: 1; }
+  100% { transform: scale(1); opacity: 0.9; }
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+  100% { transform: translateY(0px); }
+}
