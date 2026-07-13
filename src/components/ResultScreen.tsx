@@ -259,30 +259,29 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
 
           {/* 능력치 부분 막대 그래프 */}
           <div className="share-card-stats">
+            <div className="share-graph-box">
             {radarLabels.map((lbl) => {
               const score = scores[lbl.key] || 0;
-              const percent = Math.min(100, Math.round(score)); 
+              const percent = Math.min(100, Math.round(score));
               return (
                 <div key={lbl.key} className="share-bar-row">
                   <span className="share-bar-label">{lbl.name}</span>
                   <div className="share-bar-track">
-                    <div 
-                      className="share-bar-fill" 
+                    <div
+                      className="share-bar-fill"
                       style={{
                         width: `${percent}%`,
                         backgroundColor: recommendedDept.color.primary
                       }}
                     />
                   </div>
-                  <span 
-                    className="share-bar-percent" 
-                    style={{ color: recommendedDept.color.primary }}
-                  >
+                  <span className="share-bar-percent" style={{ color: recommendedDept.color.primary }}>
                     {percent}%
                   </span>
                 </div>
               );
             })}
+          </div>
           </div>
         </div>
       </div>
@@ -327,6 +326,8 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
           <h1 className="result-dept-title" style={{ color: recommendedDept.color.primary }}>
             {recommendedDept.name}
           </h1>
+          {/* Recommendation text */}
+          <p className="recommendation-text">{recommendedDept.name}과를 추천합니다!</p>
 
           <p className="result-dept-desc">
             {recommendedDept.description}
