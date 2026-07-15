@@ -11,6 +11,15 @@ import './App.css';
 import openingBg from './assets/opening_bg.webp';
 import openingLogo from './assets/opening_logo.webp';
 
+const CUTSCENE_IMAGES = [
+  ...Object.values(MEDIA_CUTSCENES),
+  ...Object.values(AVIONICS_CUTSCENES),
+  ...Object.values(ARCH_CUTSCENES),
+  ...Object.values(SEMICON_CUTSCENES),
+  ...Object.values(MILITARY_CUTSCENES),
+  ...Object.values(AUTO_CUTSCENES),
+];
+
 function App() {
   const {
     state,
@@ -35,11 +44,17 @@ function App() {
       ...Object.values(DEUMI_EXPRESSIONS),
       ...DEPARTMENTS.map(d => d.characterImage),
       ...DEPARTMENTS.flatMap(d => d.characterExpressions ? Object.values(d.characterExpressions) : []),
+      ...CUTSCENE_IMAGES,
     ];
 
-    imagesToPreload.forEach(src => {
+    Array.from(new Set(imagesToPreload)).forEach(src => {
       const img = new Image();
       img.src = src;
+      if (img.decode) {
+        img.decode().catch(() => {
+          // Ignore decode failures here; the visible img element can still retry normally.
+        });
+      }
     });
   }, []);
 
