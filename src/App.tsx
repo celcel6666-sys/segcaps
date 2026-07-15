@@ -8,8 +8,8 @@ import { sound } from './utils/sound';
 import './App.css';
 
 // 에셋 임포트
-import openingBg from './assets/opening_bg.jpg';
-import openingLogo from './assets/opening_logo.png';
+import openingBg from './assets/opening_bg.webp';
+import openingLogo from './assets/opening_logo.webp';
 
 function App() {
   const {

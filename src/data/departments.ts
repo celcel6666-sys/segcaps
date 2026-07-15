@@ -1,33 +1,33 @@
 // 각 학과의 담당 캐릭터 이미지 임포트
-import deumiDefault from '../assets/characters/deumi_default.png';
+import deumiDefault from '../assets/characters/deumi_default.webp';
 
 // 🎬 미디어과 컷씬 이미지 임포트
-import cutsceneStory1 from '../assets/컷씬/미디과/스토리1.jpg';
-import cutsceneStory2 from '../assets/컷씬/미디과/스토리2.jpg';
-import cutsceneStory3 from '../assets/컷씬/미디과/스토리3.jpg';
-import cutsceneStory4 from '../assets/컷씬/미디과/스토리4.jpg';
-import cutsceneStory5 from '../assets/컷씬/미디과/스토리5.jpg';
-import cutsceneSuccess1 from '../assets/컷씬/미디과/성공.jpg';
-import cutsceneSuccess2 from '../assets/컷씬/미디과/성공2.jpg';
-import cutsceneFail1 from '../assets/컷씬/미디과/실패.jpg';
+import cutsceneStory1 from '../assets/컷씬/미디과/스토리1.webp';
+import cutsceneStory2 from '../assets/컷씬/미디과/스토리2.webp';
+import cutsceneStory3 from '../assets/컷씬/미디과/스토리3.webp';
+import cutsceneStory4 from '../assets/컷씬/미디과/스토리4.webp';
+import cutsceneStory5 from '../assets/컷씬/미디과/스토리5.webp';
+import cutsceneSuccess1 from '../assets/컷씬/미디과/성공.webp';
+import cutsceneSuccess2 from '../assets/컷씬/미디과/성공2.webp';
+import cutsceneFail1 from '../assets/컷씬/미디과/실패.webp';
 
 // ✈️ 항공전자과 컷씬 이미지 임포트
-import avionicsStory1 from '../assets/컷씬/항공전자과/스토리1.jpg';
-import avionicsStory2 from '../assets/컷씬/항공전자과/스토리2.jpg';
-import avionicsStory3 from '../assets/컷씬/항공전자과/스토리3.jpg';
-import avionicsStory4 from '../assets/컷씬/항공전자과/스토리4.jpg';
-import avionicsSuccess1 from '../assets/컷씬/항공전자과/성공1.png';
-import avionicsSuccess2 from '../assets/컷씬/항공전자과/성공2.png';
-import avionicsFail1 from '../assets/컷씬/항공전자과/실패1.png';
-import avionicsFail2 from '../assets/컷씬/항공전자과/실패2.png';
+import avionicsStory1 from '../assets/컷씬/항공전자과/스토리1.webp';
+import avionicsStory2 from '../assets/컷씬/항공전자과/스토리2.webp';
+import avionicsStory3 from '../assets/컷씬/항공전자과/스토리3.webp';
+import avionicsStory4 from '../assets/컷씬/항공전자과/스토리4.webp';
+import avionicsSuccess1 from '../assets/컷씬/항공전자과/성공1.webp';
+import avionicsSuccess2 from '../assets/컷씬/항공전자과/성공2.webp';
+import avionicsFail1 from '../assets/컷씬/항공전자과/실패1.webp';
+import avionicsFail2 from '../assets/컷씬/항공전자과/실패2.webp';
 
 // 🏗️ 건축과 컷씬 이미지 임포트
-import archStory1 from '../assets/컷씬/건축과/스토리1.png';
-import archStory2 from '../assets/컷씬/건축과/스토리2.png';
-import archStory3 from '../assets/컷씬/건축과/스토리3.png';
-import archStory4 from '../assets/컷씬/건축과/스토리4.png';
-import archSuccess1 from '../assets/컷씬/건축과/성공1.png';
-import archSuccess2 from '../assets/컷씬/건축과/성공2.png';
+import archStory1 from '../assets/컷씬/건축과/스토리1.webp';
+import archStory2 from '../assets/컷씬/건축과/스토리2.webp';
+import archStory3 from '../assets/컷씬/건축과/스토리3.webp';
+import archStory4 from '../assets/컷씬/건축과/스토리4.webp';
+import archSuccess1 from '../assets/컷씬/건축과/성공1.webp';
+import archSuccess2 from '../assets/컷씬/건축과/성공2.webp';
 import archFail1 from '../assets/컷씬/건축과/실패.webp';
 
 // ⚡ 반도체과 컷씬 이미지 임포트
@@ -107,50 +107,50 @@ export const AUTO_CUTSCENES: Record<string, string> = {
   story4: autoStory4,
 };
 
-import deumiPaint from '../assets/characters/deumi_paint.png';
-import deumiPaintSmile from '../assets/characters/deumi_paint_smile.png';
-import deumiPaintSurprised from '../assets/characters/deumi_paint_surprised.png';
-import deumiPaintWorried from '../assets/characters/deumi_paint_worried.png';
-import deumiPaintWink from '../assets/characters/deumi_paint_wink.png';
-import deumiPaintAngry from '../assets/characters/deumi_paint_angry.png';
+import deumiPaint from '../assets/characters/deumi_paint.webp';
+import deumiPaintSmile from '../assets/characters/deumi_paint_smile.webp';
+import deumiPaintSurprised from '../assets/characters/deumi_paint_surprised.webp';
+import deumiPaintWorried from '../assets/characters/deumi_paint_worried.webp';
+import deumiPaintWink from '../assets/characters/deumi_paint_wink.webp';
+import deumiPaintAngry from '../assets/characters/deumi_paint_angry.webp';
 
-import nyangiNursing from '../assets/characters/nyangi_nursing.png';
-import nyangiNursingSmile from '../assets/characters/nyangi_nursing_smile.png';
-import nyangiNursingSad from '../assets/characters/nyangi_nursing_sad.png';
-import nyangiNursingWorried from '../assets/characters/nyangi_nursing_worried.png';
-import nyangiNursingAngry from '../assets/characters/nyangi_nursing_angry.png';
+import nyangiNursing from '../assets/characters/nyangi_nursing.webp';
+import nyangiNursingSmile from '../assets/characters/nyangi_nursing_smile.webp';
+import nyangiNursingSad from '../assets/characters/nyangi_nursing_sad.webp';
+import nyangiNursingWorried from '../assets/characters/nyangi_nursing_worried.webp';
+import nyangiNursingAngry from '../assets/characters/nyangi_nursing_angry.webp';
 
 // 도기 미래자동차과 (운전 버전)
-import dogiAuto from '../assets/characters/dogi_auto.png';
-import dogiAutoSmile from '../assets/characters/dogi_auto_smile.png';
-import dogiAutoSad from '../assets/characters/dogi_auto_sad.png';
-import dogiAutoAngry from '../assets/characters/dogi_auto_angry.png';
+import dogiAuto from '../assets/characters/dogi_auto.webp';
+import dogiAutoSmile from '../assets/characters/dogi_auto_smile.webp';
+import dogiAutoSad from '../assets/characters/dogi_auto_sad.webp';
+import dogiAutoAngry from '../assets/characters/dogi_auto_angry.webp';
 
 // 도기 디지털정보부사관과 (제복 버전)
-import dogiMilitary from '../assets/characters/dogi_military.png';
-import dogiMilitarySmile from '../assets/characters/dogi_military_smile.png';
-import dogiMilitarySad from '../assets/characters/dogi_military_sad.png';
-import dogiMilitaryAngry from '../assets/characters/dogi_military_angry.png';
+import dogiMilitary from '../assets/characters/dogi_military.webp';
+import dogiMilitarySmile from '../assets/characters/dogi_military_smile.webp';
+import dogiMilitarySad from '../assets/characters/dogi_military_sad.webp';
+import dogiMilitaryAngry from '../assets/characters/dogi_military_angry.webp';
 
 // 버리 스마트항공전자과 (비행사 버전)
-import beoriAvionics from '../assets/characters/beori_avionics.png';
-import beoriAvionicsSmile from '../assets/characters/beori_avionics_smile.png';
-import beoriAvionicsSad from '../assets/characters/beori_avionics_sad.png';
-import beoriAvionicsAngry from '../assets/characters/beori_avionics_angry.png';
-import beoriAvionicsWorried from '../assets/characters/beori_avionics_worried.png';
+import beoriAvionics from '../assets/characters/beori_avionics.webp';
+import beoriAvionicsSmile from '../assets/characters/beori_avionics_smile.webp';
+import beoriAvionicsSad from '../assets/characters/beori_avionics_sad.webp';
+import beoriAvionicsAngry from '../assets/characters/beori_avionics_angry.webp';
+import beoriAvionicsWorried from '../assets/characters/beori_avionics_worried.webp';
 
 // 버리 건축디자인과 (안전모 버전)
-import beoriArch from '../assets/characters/beori_arch.png';
-import beoriArchSmile from '../assets/characters/beori_arch_smile.png';
-import beoriArchSad from '../assets/characters/beori_arch_sad.png';
-import beoriArchAngry from '../assets/characters/beori_arch_angry.png';
-import beoriArchWorried from '../assets/characters/beori_arch_worried.png';
+import beoriArch from '../assets/characters/beori_arch.webp';
+import beoriArchSmile from '../assets/characters/beori_arch_smile.webp';
+import beoriArchSad from '../assets/characters/beori_arch_sad.webp';
+import beoriArchAngry from '../assets/characters/beori_arch_angry.webp';
+import beoriArchWorried from '../assets/characters/beori_arch_worried.webp';
 
 // 토리 반도체디스플레이과
-import toriSemicon from '../assets/characters/tori_semicon.png';
-import toriSemiconSmile from '../assets/characters/tori_semicon_smile.png';
-import toriSemiconSad from '../assets/characters/tori_semicon_sad.png';
-import toriSemiconAngry from '../assets/characters/tori_semicon_angry.png';
+import toriSemicon from '../assets/characters/tori_semicon.webp';
+import toriSemiconSmile from '../assets/characters/tori_semicon_smile.webp';
+import toriSemiconSad from '../assets/characters/tori_semicon_sad.webp';
+import toriSemiconAngry from '../assets/characters/tori_semicon_angry.webp';
 
 // 학과별 및 공통배경 이미지 임포트
 import schoolGate from '../assets/backgrounds/school_gate.webp';
@@ -159,7 +159,7 @@ import mediaBg from '../assets/backgrounds/dept_media.webp';
 import nursingBg from '../assets/backgrounds/dept_nursing.webp';
 import autoBg from '../assets/backgrounds/dept_automotive.webp';
 import avionicsBg from '../assets/backgrounds/dept_avionics.webp';
-import semiconBg from '../assets/backgrounds/dept_semiconductor.png';
+import semiconBg from '../assets/backgrounds/dept_semiconductor.webp';
 import archBg from '../assets/backgrounds/dept_architecture.webp';
 import militaryBg from '../assets/backgrounds/dept_military.webp';
 
