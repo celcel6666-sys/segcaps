@@ -321,10 +321,12 @@ export const QUIZZES_DATA: Record<string, DeptQuizData> = {
       }
     ],
     outroDialogueSuccess: [
-      { text: "아주 우수한 안보 책임 의식과 체력을 검증받았다! 영예로운 부사관 견장 뱃지를 수여한다! 🏆", expression: 'default', choices: ["국가를 수호하는 명예를 배운 것 같습니다!"] }
+      { text: "확인해 보니 정확하게 명중했네!", expression: 'default', choices: [], isCutscene: true, cutsceneImage: 'success1' },
+      { text: "사격 성공! 너라면 훌륭한 군 전문 인재가 될 수 있겠는걸!", expression: 'default', choices: ["국가를 수호하는 명예를 배운 것 같습니다!"], isCutscene: true, cutsceneImage: 'success2' }
     ],
     outroDialogueFail: [
-      { text: "기강이 해이해지면 전술 작전이 흐트러지는 법! 다시 체력을 단련하고 군사 상식을 숙지한 뒤 돌아와라!", expression: 'default', choices: ["정신일도 하사불성, 다시 전술 공부하겠습니다!"] }
+      { text: "어...? 과녁을 맞히지 못했네...", expression: 'default', choices: [], isCutscene: true, cutsceneImage: 'fail1' },
+      { text: "이번엔 조금 아쉬웠네... 다시 도전하면 분명 성공할 수 있을 거야!", expression: 'default', choices: ["정신일도 하사불성, 다시 전술 공부하겠습니다!"], isCutscene: true, cutsceneImage: 'fail2' }
     ]
   },
   SEMICONDUCTOR: {

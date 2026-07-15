@@ -44,6 +44,10 @@ import militaryStory1 from '../assets/cutscenes/military/story1.webp';
 import militaryStory2 from '../assets/cutscenes/military/story2.webp';
 import militaryStory3 from '../assets/cutscenes/military/story3.webp';
 import militaryStory4 from '../assets/cutscenes/military/story4.webp';
+import militarySuccess1 from '../assets/cutscenes/military/success1.webp';
+import militarySuccess2 from '../assets/cutscenes/military/success2.webp';
+import militaryFail1 from '../assets/cutscenes/military/fail1.webp';
+import militaryFail2 from '../assets/cutscenes/military/fail2.webp';
 
 // 🚗 자동차과 컷씬 이미지 임포트
 import autoStory1 from '../assets/cutscenes/automotive/story1.webp';
@@ -102,6 +106,10 @@ export const MILITARY_CUTSCENES: Record<string, string> = {
   story2: militaryStory2,
   story3: militaryStory3,
   story4: militaryStory4,
+  success1: militarySuccess1,
+  success2: militarySuccess2,
+  fail1: militaryFail1,
+  fail2: militaryFail2,
 };
 
 export const AUTO_CUTSCENES: Record<string, string> = {
