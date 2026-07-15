@@ -50,6 +50,8 @@ import autoStory1 from '../assets/cutscenes/automotive/story1.webp';
 import autoStory2 from '../assets/cutscenes/automotive/story2.webp';
 import autoStory3 from '../assets/cutscenes/automotive/story3.webp';
 import autoStory4 from '../assets/cutscenes/automotive/story4.webp';
+import autoSuccess1 from '../assets/cutscenes/automotive/success1.webp';
+import autoSuccess2 from '../assets/cutscenes/automotive/success2.webp';
 
 export const MEDIA_CUTSCENES: Record<string, string> = {
   story1: cutsceneStory1,
@@ -105,6 +107,8 @@ export const AUTO_CUTSCENES: Record<string, string> = {
   story2: autoStory2,
   story3: autoStory3,
   story4: autoStory4,
+  success1: autoSuccess1,
+  success2: autoSuccess2,
 };
 
 import deumiPaint from '../assets/characters/deumi_paint.webp';
