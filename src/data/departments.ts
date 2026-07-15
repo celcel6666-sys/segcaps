@@ -2,54 +2,54 @@
 import deumiDefault from '../assets/characters/deumi_default.webp';
 
 // 🎬 미디어과 컷씬 이미지 임포트
-import cutsceneStory1 from '../assets/컷씬/미디과/스토리1.webp';
-import cutsceneStory2 from '../assets/컷씬/미디과/스토리2.webp';
-import cutsceneStory3 from '../assets/컷씬/미디과/스토리3.webp';
-import cutsceneStory4 from '../assets/컷씬/미디과/스토리4.webp';
-import cutsceneStory5 from '../assets/컷씬/미디과/스토리5.webp';
-import cutsceneSuccess1 from '../assets/컷씬/미디과/성공.webp';
-import cutsceneSuccess2 from '../assets/컷씬/미디과/성공2.webp';
-import cutsceneFail1 from '../assets/컷씬/미디과/실패.webp';
+import cutsceneStory1 from '../assets/cutscenes/media/story1.webp';
+import cutsceneStory2 from '../assets/cutscenes/media/story2.webp';
+import cutsceneStory3 from '../assets/cutscenes/media/story3.webp';
+import cutsceneStory4 from '../assets/cutscenes/media/story4.webp';
+import cutsceneStory5 from '../assets/cutscenes/media/story5.webp';
+import cutsceneSuccess1 from '../assets/cutscenes/media/success.webp';
+import cutsceneSuccess2 from '../assets/cutscenes/media/success2.webp';
+import cutsceneFail1 from '../assets/cutscenes/media/fail.webp';
 
 // ✈️ 항공전자과 컷씬 이미지 임포트
-import avionicsStory1 from '../assets/컷씬/항공전자과/스토리1.webp';
-import avionicsStory2 from '../assets/컷씬/항공전자과/스토리2.webp';
-import avionicsStory3 from '../assets/컷씬/항공전자과/스토리3.webp';
-import avionicsStory4 from '../assets/컷씬/항공전자과/스토리4.webp';
-import avionicsSuccess1 from '../assets/컷씬/항공전자과/성공1.webp';
-import avionicsSuccess2 from '../assets/컷씬/항공전자과/성공2.webp';
-import avionicsFail1 from '../assets/컷씬/항공전자과/실패1.webp';
-import avionicsFail2 from '../assets/컷씬/항공전자과/실패2.webp';
+import avionicsStory1 from '../assets/cutscenes/avionics/story1.webp';
+import avionicsStory2 from '../assets/cutscenes/avionics/story2.webp';
+import avionicsStory3 from '../assets/cutscenes/avionics/story3.webp';
+import avionicsStory4 from '../assets/cutscenes/avionics/story4.webp';
+import avionicsSuccess1 from '../assets/cutscenes/avionics/success1.webp';
+import avionicsSuccess2 from '../assets/cutscenes/avionics/success2.webp';
+import avionicsFail1 from '../assets/cutscenes/avionics/fail1.webp';
+import avionicsFail2 from '../assets/cutscenes/avionics/fail2.webp';
 
 // 🏗️ 건축과 컷씬 이미지 임포트
-import archStory1 from '../assets/컷씬/건축과/스토리1.webp';
-import archStory2 from '../assets/컷씬/건축과/스토리2.webp';
-import archStory3 from '../assets/컷씬/건축과/스토리3.webp';
-import archStory4 from '../assets/컷씬/건축과/스토리4.webp';
-import archSuccess1 from '../assets/컷씬/건축과/성공1.webp';
-import archSuccess2 from '../assets/컷씬/건축과/성공2.webp';
-import archFail1 from '../assets/컷씬/건축과/실패.webp';
+import archStory1 from '../assets/cutscenes/architecture/story1.webp';
+import archStory2 from '../assets/cutscenes/architecture/story2.webp';
+import archStory3 from '../assets/cutscenes/architecture/story3.webp';
+import archStory4 from '../assets/cutscenes/architecture/story4.webp';
+import archSuccess1 from '../assets/cutscenes/architecture/success1.webp';
+import archSuccess2 from '../assets/cutscenes/architecture/success2.webp';
+import archFail1 from '../assets/cutscenes/architecture/fail.webp';
 
 // ⚡ 반도체과 컷씬 이미지 임포트
-import semiconStory1 from '../assets/컷씬/반도체과/스토리1.webp';
-import semiconStory2 from '../assets/컷씬/반도체과/스토리2.webp';
-import semiconStory3 from '../assets/컷씬/반도체과/스토리3.webp';
-import semiconStory4 from '../assets/컷씬/반도체과/스토리4.webp';
-import semiconSuccess1 from '../assets/컷씬/반도체과/성공1.webp';
-import semiconSuccess2 from '../assets/컷씬/반도체과/성공2.webp';
-import semiconFail1 from '../assets/컷씬/반도체과/실패.webp';
+import semiconStory1 from '../assets/cutscenes/semiconductor/story1.webp';
+import semiconStory2 from '../assets/cutscenes/semiconductor/story2.webp';
+import semiconStory3 from '../assets/cutscenes/semiconductor/story3.webp';
+import semiconStory4 from '../assets/cutscenes/semiconductor/story4.webp';
+import semiconSuccess1 from '../assets/cutscenes/semiconductor/success1.webp';
+import semiconSuccess2 from '../assets/cutscenes/semiconductor/success2.webp';
+import semiconFail1 from '../assets/cutscenes/semiconductor/fail.webp';
 
 // 🪖 군특성화과 컷씬 이미지 임포트
-import militaryStory1 from '../assets/컷씬/군특성화/스토리1.webp';
-import militaryStory2 from '../assets/컷씬/군특성화/스토리2.webp';
-import militaryStory3 from '../assets/컷씬/군특성화/스토리3.webp';
-import militaryStory4 from '../assets/컷씬/군특성화/스토리4.webp';
+import militaryStory1 from '../assets/cutscenes/military/story1.webp';
+import militaryStory2 from '../assets/cutscenes/military/story2.webp';
+import militaryStory3 from '../assets/cutscenes/military/story3.webp';
+import militaryStory4 from '../assets/cutscenes/military/story4.webp';
 
 // 🚗 자동차과 컷씬 이미지 임포트
-import autoStory1 from '../assets/컷씬/자동차과/스토리1.webp';
-import autoStory2 from '../assets/컷씬/자동차과/스토리2.webp';
-import autoStory3 from '../assets/컷씬/자동차과/스토리3.webp';
-import autoStory4 from '../assets/컷씬/자동차과/스토리4.webp';
+import autoStory1 from '../assets/cutscenes/automotive/story1.webp';
+import autoStory2 from '../assets/cutscenes/automotive/story2.webp';
+import autoStory3 from '../assets/cutscenes/automotive/story3.webp';
+import autoStory4 from '../assets/cutscenes/automotive/story4.webp';
 
 export const MEDIA_CUTSCENES: Record<string, string> = {
   story1: cutsceneStory1,
