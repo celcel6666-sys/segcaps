@@ -30,6 +30,16 @@ import archSuccess1 from '../assets/cutscenes/architecture/success1.webp';
 import archSuccess2 from '../assets/cutscenes/architecture/success2.webp';
 import archFail1 from '../assets/cutscenes/architecture/fail.webp';
 
+// 🏥 보건과 컷씬 이미지 임포트
+import nursingStory1 from '../assets/cutscenes/nursing/story1.webp';
+import nursingStory2 from '../assets/cutscenes/nursing/story2.webp';
+import nursingStory3 from '../assets/cutscenes/nursing/story3.webp';
+import nursingStory4 from '../assets/cutscenes/nursing/story4.webp';
+import nursingSuccess1 from '../assets/cutscenes/nursing/success1.webp';
+import nursingSuccess2 from '../assets/cutscenes/nursing/success2.webp';
+import nursingFail1 from '../assets/cutscenes/nursing/fail1.webp';
+import nursingFail2 from '../assets/cutscenes/nursing/fail2.webp';
+
 // ⚡ 반도체과 컷씬 이미지 임포트
 import semiconStory1 from '../assets/cutscenes/semiconductor/story1.webp';
 import semiconStory2 from '../assets/cutscenes/semiconductor/story2.webp';
@@ -89,6 +99,17 @@ export const ARCH_CUTSCENES: Record<string, string> = {
   success1: archSuccess1,
   success2: archSuccess2,
   fail: archFail1,
+};
+
+export const NURSING_CUTSCENES: Record<string, string> = {
+  story1: nursingStory1,
+  story2: nursingStory2,
+  story3: nursingStory3,
+  story4: nursingStory4,
+  success1: nursingSuccess1,
+  success2: nursingSuccess2,
+  fail1: nursingFail1,
+  fail2: nursingFail2,
 };
 
 export const SEMICON_CUTSCENES: Record<string, string> = {

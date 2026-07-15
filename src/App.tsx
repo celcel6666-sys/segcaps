@@ -3,7 +3,7 @@ import { useGameState } from './hooks/useGameState';
 import { MessageBox } from './components/common/MessageBox';
 import { BadgeReward } from './components/common/BadgeReward';
 import { ResultScreen } from './components/ResultScreen';
-import { COMMON_ASSETS, DEUMI_EXPRESSIONS, DEPARTMENTS, MEDIA_CUTSCENES, AVIONICS_CUTSCENES, ARCH_CUTSCENES, SEMICON_CUTSCENES, MILITARY_CUTSCENES, AUTO_CUTSCENES } from './data/departments';
+import { COMMON_ASSETS, DEUMI_EXPRESSIONS, DEPARTMENTS, MEDIA_CUTSCENES, AVIONICS_CUTSCENES, ARCH_CUTSCENES, NURSING_CUTSCENES, SEMICON_CUTSCENES, MILITARY_CUTSCENES, AUTO_CUTSCENES } from './data/departments';
 import { sound } from './utils/sound';
 import './App.css';
 
@@ -15,6 +15,7 @@ const CUTSCENE_IMAGES = [
   ...Object.values(MEDIA_CUTSCENES),
   ...Object.values(AVIONICS_CUTSCENES),
   ...Object.values(ARCH_CUTSCENES),
+  ...Object.values(NURSING_CUTSCENES),
   ...Object.values(SEMICON_CUTSCENES),
   ...Object.values(MILITARY_CUTSCENES),
   ...Object.values(AUTO_CUTSCENES),
@@ -98,6 +99,7 @@ function App() {
         // 학과별 컷씬 맵 선택
         const cutsceneMap = currentDept.id === 'AVIONICS' ? AVIONICS_CUTSCENES
           : currentDept.id === 'ARCHITECTURE' ? ARCH_CUTSCENES
+          : currentDept.id === 'NURSING' ? NURSING_CUTSCENES
           : currentDept.id === 'SEMICONDUCTOR' ? SEMICON_CUTSCENES
           : currentDept.id === 'MILITARY' ? MILITARY_CUTSCENES
           : currentDept.id === 'AUTOMOTIVE' ? AUTO_CUTSCENES
@@ -113,6 +115,7 @@ function App() {
       if (dialogue && dialogue.isCutscene && dialogue.cutsceneImage) {
         const cutsceneMap = currentDept.id === 'AVIONICS' ? AVIONICS_CUTSCENES
           : currentDept.id === 'ARCHITECTURE' ? ARCH_CUTSCENES
+          : currentDept.id === 'NURSING' ? NURSING_CUTSCENES
           : currentDept.id === 'SEMICONDUCTOR' ? SEMICON_CUTSCENES
           : currentDept.id === 'MILITARY' ? MILITARY_CUTSCENES
           : currentDept.id === 'AUTOMOTIVE' ? AUTO_CUTSCENES

@@ -71,8 +71,10 @@ export const QUIZZES_DATA: Record<string, DeptQuizData> = {
   },
   NURSING: {
     introDialogue: [
-      { text: "반가워구냥! 여긴 아픈 사람을 돌보고 보살피는 보건간호과 교실이다냥. 🏥", expression: 'default', choices: ["우와, 냥이 간호사구나! 반가워!", "치료 실습 도구들이 많네!"] },
-      { text: "간단하지만 우리 생활에 정말 꼭 필요한 보건 기본 상식 퀴즈를 준비했다냥!", expression: 'default', choices: ["생명을 살리는 퀴즈, 출발! 🚑"] }
+      { text: "안녕! 이곳은 보건과야. 큰일이야! 응급상황이 발생한 것 같아!", expression: 'default', choices: [], isCutscene: true, cutsceneImage: 'story1' },
+      { text: "서둘러야 해! 응급가방을 열어서 필요한 도구부터 꺼내 보자!", expression: 'default', choices: [], isCutscene: true, cutsceneImage: 'story2' },
+      { text: "앗! 붕대가 몸에 감겨 버렸어... 이러면 응급처치를 할 수 없잖아!", expression: 'worried', choices: [], isCutscene: true, cutsceneImage: 'story3' },
+      { text: "혹시 나 좀 도와줄 수 있을까? 보건과 퀴즈를 풀어서 응급처치를 도와줘!", expression: 'worried', choices: ["좋아, 도와줄게! 🚑"], isCutscene: true, cutsceneImage: 'story4' }
     ],
     quizzes: [
       {
@@ -112,10 +114,12 @@ export const QUIZZES_DATA: Record<string, DeptQuizData> = {
       }
     ],
     outroDialogueSuccess: [
-      { text: "따뜻한 배려심과 정확한 보건 상식을 모두 증명했다냥! 정말 최고의 수호천사 자격이 있다냥! 🏅", expression: 'default', choices: ["돌봄의 가치를 배운 것 같아! 👋"] }
+      { text: "휴~ 응급처치가 무사히 끝났어! 정말 다행이야!", expression: 'smile', choices: [], isCutscene: true, cutsceneImage: 'success1' },
+      { text: "응급처치 성공! 너라면 훌륭한 의료인이 될 수 있겠는걸!", expression: 'smile', choices: ["돌봄의 가치를 배운 것 같아! 👋"], isCutscene: true, cutsceneImage: 'success2' }
     ],
     outroDialogueFail: [
-      { text: "아쉽지만 미션 실패다냥. 보건 지식은 생명과 직결되니 더 꼼꼼히 공부하고 다시 도전해 달라냥!", expression: 'default', choices: ["더 꼼꼼하게 복습해 올게냥!"] }
+      { text: "어... 아직 응급처치가 제대로 끝나지 않은 것 같아...", expression: 'sad', choices: [], isCutscene: true, cutsceneImage: 'fail1' },
+      { text: "괜찮아! 다시 도전해서 이번에는 응급처치를 꼭 성공시켜 보자!", expression: 'worried', choices: ["더 꼼꼼하게 복습해 올게냥!"], isCutscene: true, cutsceneImage: 'fail2' }
     ]
   },
   AUTOMOTIVE: {
