@@ -167,7 +167,8 @@ export const QUIZZES_DATA: Record<string, DeptQuizData> = {
       { text: "자동차 정비 성공! 너라면 훌륭한 자동차 정비사가 될 수 있겠는걸!", expression: 'smile', choices: ["멋진 자동차를 만들어 보고 싶어!"], isCutscene: true, cutsceneImage: 'success2' }
     ],
     outroDialogueFail: [
-      { text: "아쉽다! 하지만 기계는 반복 훈련이 생명이지. 도면을 다시 보고 정비 퀴즈에 재도전하라!", expression: 'default', choices: ["반복 정비 실습, 다시 하러 갈게!"] }
+      { text: "으악! 자동차가 완전히 망가져버렸어!", expression: 'sad', choices: [], isCutscene: true, cutsceneImage: 'fail1' },
+      { text: "이번엔 실패했네... 그래도 포기하지 말고 다시 도전해서 자동차를 고쳐 보자!", expression: 'sad', choices: ["반복 정비 실습, 다시 하러 갈게!"], isCutscene: true, cutsceneImage: 'fail2' }
     ]
   },
   AVIONICS: {
