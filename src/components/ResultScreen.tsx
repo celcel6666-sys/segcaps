@@ -20,6 +20,7 @@ import semiconductorDown from '../assets/ending/down-ascii/semiconductor.webp';
 interface ResultScreenProps {
   scores: Record<string, number>;
   badgeList: string[];
+  playerName: string;
   onReset: () => void;
 }
 
@@ -66,6 +67,7 @@ const RESULT_BARS = [
 export const ResultScreen: React.FC<ResultScreenProps> = ({
   scores,
   badgeList,
+  playerName,
   onReset,
 }) => {
   const [shareOpen, setShareOpen] = useState(false);
@@ -84,22 +86,6 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
   const shareUrl = `${window.location.origin}${window.location.pathname}?result=${recommendedDept.id}`;
   const shareText = `나에게 어울리는 세경고 학과는 ${deptName}!`;
   const isSharedEntry = window.location.search.includes('result');
-
-  const getPlayerName = () => {
-    const storedName = ['playerName', 'userName', 'nickname', 'name']
-      .map((key) => window.localStorage.getItem(key)?.trim())
-      .find(Boolean);
-
-    if (storedName) return storedName;
-
-    const typedName = window.prompt('결과 카드에 넣을 이름을 입력해 주세요.', '')?.trim();
-    if (typedName) {
-      window.localStorage.setItem('playerName', typedName);
-      return typedName;
-    }
-
-    return '';
-  };
 
   const loadImage = (src: string) => new Promise<HTMLImageElement>((resolve, reject) => {
     const image = new Image();
@@ -193,7 +179,7 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
   };
 
   const createDownloadCard = async () => {
-    const playerName = getPlayerName();
+    const cardPlayerName = playerName.trim();
     const image = await loadImage(downloadImage);
     const deviceScale = window.devicePixelRatio || 1;
     const viewportWidth = Math.max(window.innerWidth || image.naturalWidth, 360);
@@ -209,13 +195,13 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
 
     ctx.drawImage(image, 0, 0, targetWidth, targetHeight);
 
-    if (playerName) {
+    if (cardPlayerName) {
       ctx.save();
       ctx.font = `900 ${Math.round(canvas.width * 0.038)}px sans-serif`;
       ctx.fillStyle = '#111827';
       ctx.textAlign = 'right';
       ctx.textBaseline = 'middle';
-      ctx.fillText(playerName, canvas.width * 0.445, canvas.height * 0.288);
+      ctx.fillText(cardPlayerName, canvas.width * 0.445, canvas.height * 0.315);
       ctx.restore();
     }
 

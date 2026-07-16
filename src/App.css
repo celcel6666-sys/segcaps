@@ -77,6 +77,41 @@
   margin-bottom: 8px;
 }
 
+.player-name-field {
+  width: 100%;
+  max-width: 270px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  align-items: center;
+}
+
+.player-name-field span {
+  font-family: var(--font-mitmi);
+  font-size: 17px;
+  color: #ffffff;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.75);
+}
+
+.player-name-field input {
+  width: 100%;
+  height: 46px;
+  border: 3px solid #ffffff;
+  border-radius: 23px;
+  padding: 0 18px;
+  background: rgba(255, 255, 255, 0.92);
+  color: #1e293b;
+  font-size: 18px;
+  font-weight: 800;
+  text-align: center;
+  outline: none;
+  box-shadow: 0 5px 0 rgba(15, 23, 42, 0.25);
+}
+
+.player-name-field input::placeholder {
+  color: #94a3b8;
+}
+
 /* 세로 폭이 좁은 폰(예: 700px 이하)에서는 로고 크기를 줄여 세이프플레이스 공간 확보 */
 @media (max-height: 700px) {
   .opening-logo {
@@ -100,6 +135,17 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.start-btn.disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.start-btn.disabled .btn-bg {
+  background-color: #94a3b8;
+  border-color: #94a3b8;
+  box-shadow: 0 6px 0 #64748b;
 }
 
 .btn-bg {

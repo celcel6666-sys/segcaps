@@ -35,6 +35,7 @@ function App() {
   } = useGameState();
 
   const [isLogoPressed, setIsLogoPressed] = useState(false);
+  const [playerName, setPlayerName] = useState(() => window.localStorage.getItem('playerName') || '');
   // 📸 고해상도 배경 이미지와 캐릭터 일러스트를 선제적 프리로딩
   useEffect(() => {
     const imagesToPreload = [
@@ -183,6 +184,8 @@ function App() {
     nextDialogue();
   };
 
+  const trimmedPlayerName = playerName.trim();
+
 
 
   return (
@@ -215,10 +218,23 @@ function App() {
             </div>
 
             <div className="opening-footer">
+              <label className="player-name-field">
+                <span>이름을 입력해 주세요</span>
+                <input
+                  value={playerName}
+                  maxLength={12}
+                  placeholder="예: 세경이"
+                  onClick={(e) => e.stopPropagation()}
+                  onChange={(e) => setPlayerName(e.target.value)}
+                />
+              </label>
               <button 
-                className="start-btn" 
+                className={`start-btn ${!trimmedPlayerName ? 'disabled' : ''}`}
+                disabled={!trimmedPlayerName}
                 onClick={(e) => {
                   e.stopPropagation();
+                  if (!trimmedPlayerName) return;
+                  window.localStorage.setItem('playerName', trimmedPlayerName);
                   sound.playEffect('click');
                   sound.playBGM();
                   startGame();
@@ -364,6 +380,7 @@ function App() {
           <ResultScreen
             scores={state.scores}
             badgeList={state.badgeList}
+            playerName={trimmedPlayerName || window.localStorage.getItem('playerName') || ''}
             onReset={() => {
               sound.playEffect('click');
               // BGM 정지 후 재시작
