@@ -177,6 +177,18 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
       ctx.stroke();
     });
 
+    ctx.font = `900 ${Math.round(width * 0.018)}px sans-serif`;
+    ctx.fillStyle = '#334155';
+    ctx.textBaseline = 'middle';
+    RESULT_BARS.forEach((item, index) => {
+      const angle = (index * 2 * Math.PI) / sides - Math.PI / 2;
+      const labelRadius = radius * 1.28;
+      const x = centerX + labelRadius * Math.cos(angle);
+      const y = centerY + labelRadius * Math.sin(angle);
+      ctx.textAlign = Math.cos(angle) > 0.25 ? 'left' : Math.cos(angle) < -0.25 ? 'right' : 'center';
+      ctx.fillText(item.name, x, y);
+    });
+
     ctx.restore();
   };
 
@@ -203,7 +215,7 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
       ctx.fillStyle = '#111827';
       ctx.textAlign = 'right';
       ctx.textBaseline = 'middle';
-      ctx.fillText(playerName, canvas.width * 0.445, canvas.height * 0.282);
+      ctx.fillText(playerName, canvas.width * 0.445, canvas.height * 0.288);
       ctx.restore();
     }
 
