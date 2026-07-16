@@ -265,11 +265,12 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
           position: absolute;
           left: 4.5%;
           right: 4.5%;
-          top: 54%;
+          top: 50%;
+          transform: translateY(-50%);
           display: flex;
           flex-direction: column;
-          gap: 12px;
-          padding: 16px 16px 18px;
+          gap: 30px;
+          padding: 28px 18px 30px;
           border-radius: 18px;
           background: rgba(255, 255, 255, 0.9);
           box-sizing: border-box;
@@ -286,25 +287,25 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
         }
 
         .bar-panel-head span {
-          font-size: 18px;
+          font-size: 30px;
           font-weight: 800;
           color: ${recommendedDept.color.primary};
         }
 
         .bar-panel-head strong {
-          font-size: 20px;
+          font-size: 34px;
         }
 
         .bar-list {
           display: flex;
           flex-direction: column;
-          gap: 13px;
+          gap: 39px;
         }
 
         .bar-row {
           display: flex;
           flex-direction: column;
-          gap: 5px;
+          gap: 14px;
         }
 
         .bar-title {
@@ -316,15 +317,15 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
         }
 
         .bar-icon {
-          width: 20px;
+          width: 38px;
           text-align: center;
-          font-size: 15px;
+          font-size: 30px;
           line-height: 1;
         }
 
         .bar-name,
         .bar-percent {
-          font-size: 14px;
+          font-size: 28px;
           font-weight: 900;
           line-height: 1.1;
         }
@@ -335,7 +336,7 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
         }
 
         .bar-track {
-          height: 10px;
+          height: 24px;
           overflow: hidden;
           border-radius: 999px;
           background: #e5e7eb;
@@ -351,7 +352,7 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
         .ending-summary {
           margin: 0;
           text-align: center;
-          font-size: 12px;
+          font-size: 22px;
           line-height: 1.35;
           color: #64748b;
           font-weight: 800;
@@ -458,21 +459,21 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
 
         @media (min-width: 720px) {
           .result-bar-panel {
-            top: 53%;
-            padding: 18px 20px 20px;
+            top: 50%;
+            padding: 30px 24px 32px;
           }
 
           .bar-list {
-            gap: 15px;
+            gap: 42px;
           }
 
           .bar-track {
-            height: 12px;
+            height: 26px;
           }
 
           .bar-name,
           .bar-percent {
-            font-size: 15px;
+            font-size: 30px;
           }
         }
       `}</style>
