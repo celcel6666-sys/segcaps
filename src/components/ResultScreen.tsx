@@ -76,11 +76,11 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
     if (!canvas || !ctx) return;
 
     const dpr = window.devicePixelRatio || 1;
-    const width = 320;
-    const height = 250;
+    const width = 360;
+    const height = 290;
     const centerX = width / 2;
-    const centerY = height / 2 + 8;
-    const radius = 72;
+    const centerY = height / 2 + 10;
+    const radius = 98;
 
     canvas.width = width * dpr;
     canvas.height = height * dpr;
@@ -146,13 +146,13 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
       ctx.stroke();
     });
 
-    ctx.font = '700 12px sans-serif';
+    ctx.font = '800 14px sans-serif';
     ctx.fillStyle = '#334155';
     ctx.textBaseline = 'middle';
     RADAR_LABELS.forEach((label, index) => {
       const angle = (index * 2 * Math.PI) / RADAR_LABELS.length - Math.PI / 2;
-      const x = centerX + (radius + 28) * Math.cos(angle);
-      const y = centerY + (radius + 20) * Math.sin(angle);
+      const x = centerX + (radius + 30) * Math.cos(angle);
+      const y = centerY + (radius + 22) * Math.sin(angle);
       ctx.textAlign = Math.cos(angle) > 0.2 ? 'left' : Math.cos(angle) < -0.2 ? 'right' : 'center';
       ctx.fillText(label.name, x, y);
     });
@@ -355,15 +355,15 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
 
         .ending-center-panel {
           position: absolute;
-          left: 7.2%;
-          right: 7.2%;
-          top: 24.5%;
-          min-height: 45%;
+          left: 4.5%;
+          right: 4.5%;
+          top: 18%;
+          min-height: 58%;
           display: flex;
           flex-direction: column;
-          justify-content: center;
-          gap: 10px;
-          padding: 12px 14px;
+          justify-content: flex-start;
+          gap: 12px;
+          padding: 14px 16px;
           border-radius: 14px;
           background: rgba(255, 255, 255, 0.86);
           box-sizing: border-box;
@@ -380,26 +380,26 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
         }
 
         .ending-title span {
-          font-size: 17px;
+          font-size: 19px;
           font-weight: 700;
           color: ${recommendedDept.color.primary};
         }
 
         .ending-title strong {
-          font-size: 20px;
+          font-size: 22px;
         }
 
         .chart-layout {
           display: grid;
           grid-template-columns: 1fr;
-          gap: 6px;
+          gap: 10px;
           align-items: center;
         }
 
         .radar-box {
           display: flex;
           justify-content: center;
-          min-height: 190px;
+          min-height: 255px;
           overflow: hidden;
         }
 
@@ -411,19 +411,19 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
         .bar-list {
           display: flex;
           flex-direction: column;
-          gap: 7px;
+          gap: 10px;
         }
 
         .bar-row {
           display: grid;
-          grid-template-columns: 54px 1fr 36px;
-          gap: 8px;
+          grid-template-columns: 64px 1fr 42px;
+          gap: 10px;
           align-items: center;
         }
 
         .bar-label,
         .bar-percent {
-          font-size: 12px;
+          font-size: 14px;
           font-weight: 700;
           color: #334155;
           line-height: 1;
@@ -434,7 +434,7 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
         }
 
         .bar-track {
-          height: 10px;
+          height: 14px;
           overflow: hidden;
           border-radius: 999px;
           background: #e2e8f0;
@@ -448,7 +448,7 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
         .ending-summary {
           margin: 2px 0 0;
           text-align: center;
-          font-size: 12px;
+          font-size: 14px;
           line-height: 1.35;
           color: #475569;
           font-weight: 700;
@@ -558,19 +558,19 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
           }
 
           .ending-center-panel {
-            left: 8%;
-            right: 8%;
-            top: 25%;
+            left: 5.5%;
+            right: 5.5%;
+            top: 18.5%;
             padding: 18px 22px;
           }
 
           .chart-layout {
             grid-template-columns: 1fr 0.95fr;
-            gap: 8px;
+            gap: 12px;
           }
 
           .radar-box {
-            min-height: 250px;
+            min-height: 290px;
           }
 
           .bar-row {
