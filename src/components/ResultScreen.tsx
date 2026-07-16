@@ -327,7 +327,7 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
           padding: 18px 14px 34px;
           display: flex;
           flex-direction: column;
-          gap: 18px;
+          gap: 0;
           background: #f8fafc;
         }
 
@@ -456,10 +456,14 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
 
         .result-actions {
           width: min(100%, 560px);
-          margin: 0 auto;
+          margin: clamp(-150px, -24vw, -96px) auto 0;
+          padding: 0 14px 14px;
           display: grid;
           grid-template-columns: 1fr 1fr;
           gap: 10px;
+          position: relative;
+          z-index: 3;
+          box-sizing: border-box;
         }
 
         .result-btn {
