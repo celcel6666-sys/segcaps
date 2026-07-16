@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import html2canvas from 'html2canvas';
 import { DEPARTMENTS } from '../data/departments';
 import type { Department } from '../data/departments';
@@ -37,14 +37,14 @@ const DEPT_LABELS: Record<string, string> = {
   SEMICONDUCTOR: '반도체디스플레이과',
 };
 
-const RADAR_LABELS = [
-  { name: '예술성', key: 'artistic' },
-  { name: '배려심', key: 'caring' },
-  { name: '논리력', key: 'logical' },
-  { name: '공간감', key: 'spatial' },
-  { name: '기술력', key: 'technical' },
-  { name: '정밀성', key: 'precision' },
-  { name: '책임감', key: 'responsibility' },
+const RESULT_BARS = [
+  { name: '예술성', key: 'artistic', icon: '🎨', color: '#3b82f6' },
+  { name: '따뜻한 마음', key: 'caring', icon: '💗', color: '#f472b6' },
+  { name: '창의성', key: 'logical', icon: '🛠️', color: '#f59e0b' },
+  { name: '분석성', key: 'spatial', icon: '📕', color: '#ef4444' },
+  { name: '기술성', key: 'technical', icon: '🚗', color: '#64748b' },
+  { name: '정밀성', key: 'precision', icon: '✈️', color: '#38bdf8' },
+  { name: '책임성', key: 'responsibility', icon: '🪖', color: '#65a30d' },
 ];
 
 export const ResultScreen: React.FC<ResultScreenProps> = ({
@@ -52,7 +52,6 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
   badgeList,
   onReset,
 }) => {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const cardRef = useRef<HTMLDivElement | null>(null);
   const [shareOpen, setShareOpen] = useState(false);
 
@@ -69,94 +68,6 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
   const shareUrl = `${window.location.origin}${window.location.pathname}?result=${recommendedDept.id}`;
   const shareText = `나에게 어울리는 세경고 학과는 ${deptName}!`;
   const isSharedEntry = window.location.search.includes('result');
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const ctx = canvas?.getContext('2d');
-    if (!canvas || !ctx) return;
-
-    const dpr = window.devicePixelRatio || 1;
-    const width = 360;
-    const height = 290;
-    const centerX = width / 2;
-    const centerY = height / 2 + 10;
-    const radius = 98;
-
-    canvas.width = width * dpr;
-    canvas.height = height * dpr;
-    canvas.style.width = `${width}px`;
-    canvas.style.height = `${height}px`;
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.clearRect(0, 0, width, height);
-
-    for (let level = 1; level <= 4; level += 1) {
-      const levelRadius = radius * (level / 4);
-      ctx.beginPath();
-      RADAR_LABELS.forEach((_, index) => {
-        const angle = (index * 2 * Math.PI) / RADAR_LABELS.length - Math.PI / 2;
-        const x = centerX + levelRadius * Math.cos(angle);
-        const y = centerY + levelRadius * Math.sin(angle);
-        if (index === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
-      });
-      ctx.closePath();
-      ctx.strokeStyle = '#dbeafe';
-      ctx.lineWidth = 1.4;
-      ctx.stroke();
-    }
-
-    RADAR_LABELS.forEach((_, index) => {
-      const angle = (index * 2 * Math.PI) / RADAR_LABELS.length - Math.PI / 2;
-      ctx.beginPath();
-      ctx.moveTo(centerX, centerY);
-      ctx.lineTo(centerX + radius * Math.cos(angle), centerY + radius * Math.sin(angle));
-      ctx.strokeStyle = '#e2e8f0';
-      ctx.lineWidth = 1;
-      ctx.stroke();
-    });
-
-    const points = RADAR_LABELS.map((label, index) => {
-      const score = Math.max(8, Math.min(100, scores[label.key] || 0));
-      const angle = (index * 2 * Math.PI) / RADAR_LABELS.length - Math.PI / 2;
-      return {
-        x: centerX + radius * (score / 100) * Math.cos(angle),
-        y: centerY + radius * (score / 100) * Math.sin(angle),
-      };
-    });
-
-    ctx.beginPath();
-    points.forEach((point, index) => {
-      if (index === 0) ctx.moveTo(point.x, point.y);
-      else ctx.lineTo(point.x, point.y);
-    });
-    ctx.closePath();
-    ctx.fillStyle = `${recommendedDept.color.primary}33`;
-    ctx.strokeStyle = recommendedDept.color.primary;
-    ctx.lineWidth = 3;
-    ctx.fill();
-    ctx.stroke();
-
-    points.forEach((point) => {
-      ctx.beginPath();
-      ctx.arc(point.x, point.y, 4, 0, Math.PI * 2);
-      ctx.fillStyle = recommendedDept.color.primary;
-      ctx.fill();
-      ctx.strokeStyle = '#ffffff';
-      ctx.lineWidth = 2;
-      ctx.stroke();
-    });
-
-    ctx.font = '800 14px sans-serif';
-    ctx.fillStyle = '#334155';
-    ctx.textBaseline = 'middle';
-    RADAR_LABELS.forEach((label, index) => {
-      const angle = (index * 2 * Math.PI) / RADAR_LABELS.length - Math.PI / 2;
-      const x = centerX + (radius + 30) * Math.cos(angle);
-      const y = centerY + (radius + 22) * Math.sin(angle);
-      ctx.textAlign = Math.cos(angle) > 0.2 ? 'left' : Math.cos(angle) < -0.2 ? 'right' : 'center';
-      ctx.fillText(label.name, x, y);
-    });
-  }, [recommendedDept.color.primary, scores]);
 
   const captureResultCard = async () => {
     if (!cardRef.current) return null;
@@ -187,7 +98,6 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
   const copyShareLink = async () => {
     try {
       await navigator.clipboard.writeText(shareUrl);
-      alert('공유 링크가 복사되었습니다.');
     } catch {
       const input = document.createElement('input');
       input.value = shareUrl;
@@ -195,8 +105,8 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
       input.select();
       document.execCommand('copy');
       document.body.removeChild(input);
-      alert('공유 링크가 복사되었습니다.');
     }
+    alert('공유 링크가 복사되었습니다.');
   };
 
   const handleShare = async () => {
@@ -209,7 +119,7 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
         });
         return;
       } catch {
-        // The platform share sheet was dismissed, so fall back to the in-page options.
+        // The native share sheet was dismissed, so show the manual options.
       }
     }
 
@@ -232,68 +142,68 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
 
   return (
     <div className="result-screen-container">
-      <div className="ending-card-wrap">
+      <div className="ending-result-stack">
         <div ref={cardRef} className="ending-card">
           <img src={endingImage} alt={`${deptName} 결과 배경`} className="ending-bg" draggable={false} />
 
-          <div className="ending-center-panel">
-            <div className="ending-title">
+          <section className="result-bar-panel" aria-label="적성 결과 막대 그래프">
+            <div className="bar-panel-head">
               <span>{deptName}</span>
               <strong>추천 결과</strong>
             </div>
 
-            <div className="chart-layout">
-              <div className="radar-box">
-                <canvas ref={canvasRef} width={320} height={250} />
-              </div>
-
-              <div className="bar-list">
-                {RADAR_LABELS.map((label) => {
-                  const percent = Math.min(100, Math.round(scores[label.key] || 0));
-                  return (
-                    <div key={label.key} className="bar-row">
-                      <span className="bar-label">{label.name}</span>
-                      <div className="bar-track">
-                        <div
-                          className="bar-fill"
-                          style={{
-                            width: `${percent}%`,
-                            backgroundColor: recommendedDept.color.primary,
-                          }}
-                        />
-                      </div>
+            <div className="bar-list">
+              {RESULT_BARS.map((item) => {
+                const percent = Math.min(100, Math.round(scores[item.key] || 0));
+                return (
+                  <div key={item.key} className="bar-row">
+                    <div className="bar-title">
+                      <span className="bar-icon" aria-hidden="true">{item.icon}</span>
+                      <span className="bar-name" style={{ color: item.color }}>{item.name}</span>
                       <span className="bar-percent">{percent}%</span>
                     </div>
-                  );
-                })}
-              </div>
+                    <div className="bar-track">
+                      <div
+                        className="bar-fill"
+                        style={{
+                          width: `${percent}%`,
+                          backgroundColor: item.color,
+                        }}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
             </div>
 
             <p className="ending-summary">
               획득 배지 {badgeList.length}/7개 · 가장 높은 적성은 {deptName}와 잘 어울립니다.
             </p>
-          </div>
+          </section>
         </div>
-      </div>
 
-      <div className="result-actions">
-        <button className="result-btn share-btn" onClick={handleShare}>
-          공유하기
-        </button>
-        <button className="result-btn download-btn" onClick={handleDownloadCard}>
-          이미지 저장하기
-        </button>
-        {isSharedEntry ? (
-          <button className="result-btn restart-btn" onClick={() => {
-            window.location.href = window.location.origin + window.location.pathname;
-          }}>
-            나도 테스트하기
+        <div className="result-actions">
+          <button className="result-btn share-btn" onClick={handleShare}>
+            공유하기
           </button>
-        ) : (
-          <button className="result-btn restart-btn" onClick={onReset}>
-            처음부터 다시하기
+          <button className="result-btn download-btn" onClick={handleDownloadCard}>
+            이미지 저장하기
           </button>
-        )}
+          {isSharedEntry ? (
+            <button
+              className="result-btn restart-btn"
+              onClick={() => {
+                window.location.href = window.location.origin + window.location.pathname;
+              }}
+            >
+              나도 테스트하기
+            </button>
+          ) : (
+            <button className="result-btn restart-btn" onClick={onReset}>
+              처음부터 다시하기
+            </button>
+          )}
+        </div>
       </div>
 
       {shareOpen && (
@@ -324,26 +234,24 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
           overflow-y: auto;
           overscroll-behavior: contain;
           -webkit-overflow-scrolling: touch;
-          padding: 18px 14px 34px;
-          display: flex;
-          flex-direction: column;
-          gap: 0;
+          padding: 0 0 28px;
           background: #f8fafc;
         }
 
-        .ending-card-wrap {
+        .ending-result-stack {
           width: 100%;
+          max-width: 560px;
+          margin: 0 auto;
           display: flex;
-          justify-content: center;
+          flex-direction: column;
+          gap: 10px;
         }
 
         .ending-card {
           position: relative;
-          width: min(100%, 560px);
+          width: 100%;
           overflow: hidden;
-          border-radius: 18px;
           background: #ffffff;
-          box-shadow: 0 14px 34px rgba(15, 23, 42, 0.16);
         }
 
         .ending-bg {
@@ -353,23 +261,21 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
           user-select: none;
         }
 
-        .ending-center-panel {
+        .result-bar-panel {
           position: absolute;
           left: 4.5%;
           right: 4.5%;
-          top: 18%;
-          min-height: 58%;
+          top: 54%;
           display: flex;
           flex-direction: column;
-          justify-content: flex-start;
           gap: 12px;
-          padding: 14px 16px;
-          border-radius: 14px;
-          background: rgba(255, 255, 255, 0.86);
+          padding: 16px 16px 18px;
+          border-radius: 18px;
+          background: rgba(255, 255, 255, 0.9);
           box-sizing: border-box;
         }
 
-        .ending-title {
+        .bar-panel-head {
           display: flex;
           align-items: baseline;
           justify-content: center;
@@ -379,90 +285,84 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
           white-space: nowrap;
         }
 
-        .ending-title span {
-          font-size: 19px;
-          font-weight: 700;
+        .bar-panel-head span {
+          font-size: 18px;
+          font-weight: 800;
           color: ${recommendedDept.color.primary};
         }
 
-        .ending-title strong {
-          font-size: 22px;
-        }
-
-        .chart-layout {
-          display: grid;
-          grid-template-columns: 1fr;
-          gap: 10px;
-          align-items: center;
-        }
-
-        .radar-box {
-          display: flex;
-          justify-content: center;
-          min-height: 255px;
-          overflow: hidden;
-        }
-
-        .radar-box canvas {
-          max-width: 100%;
-          height: auto !important;
+        .bar-panel-head strong {
+          font-size: 20px;
         }
 
         .bar-list {
           display: flex;
           flex-direction: column;
-          gap: 10px;
+          gap: 13px;
         }
 
         .bar-row {
-          display: grid;
-          grid-template-columns: 64px 1fr 42px;
-          gap: 10px;
-          align-items: center;
+          display: flex;
+          flex-direction: column;
+          gap: 5px;
         }
 
-        .bar-label,
-        .bar-percent {
-          font-size: 14px;
-          font-weight: 700;
-          color: #334155;
+        .bar-title {
+          display: grid;
+          grid-template-columns: auto 1fr auto;
+          gap: 4px;
+          align-items: center;
+          min-width: 0;
+        }
+
+        .bar-icon {
+          width: 20px;
+          text-align: center;
+          font-size: 15px;
           line-height: 1;
         }
 
+        .bar-name,
         .bar-percent {
+          font-size: 14px;
+          font-weight: 900;
+          line-height: 1.1;
+        }
+
+        .bar-percent {
+          color: #475569;
           text-align: right;
         }
 
         .bar-track {
-          height: 14px;
+          height: 10px;
           overflow: hidden;
           border-radius: 999px;
-          background: #e2e8f0;
+          background: #e5e7eb;
         }
 
         .bar-fill {
           height: 100%;
+          min-width: 0;
           border-radius: 999px;
+          transition: width 0.7s ease;
         }
 
         .ending-summary {
-          margin: 2px 0 0;
+          margin: 0;
           text-align: center;
-          font-size: 14px;
+          font-size: 12px;
           line-height: 1.35;
-          color: #475569;
-          font-weight: 700;
+          color: #64748b;
+          font-weight: 800;
         }
 
         .result-actions {
-          width: min(100%, 560px);
-          margin: clamp(-150px, -24vw, -96px) auto 0;
-          padding: 0 14px 14px;
+          width: 100%;
           display: grid;
           grid-template-columns: 1fr 1fr;
           gap: 10px;
-          position: relative;
-          z-index: 3;
+          padding: 0 14px 14px;
           box-sizing: border-box;
         }
 
@@ -471,7 +371,7 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
           border: 0;
           border-radius: 14px;
           font-size: 16px;
-          font-weight: 800;
+          font-weight: 900;
           color: #ffffff;
           cursor: pointer;
           box-shadow: 0 6px 0 rgba(15, 23, 42, 0.2);
@@ -557,34 +457,22 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
         }
 
         @media (min-width: 720px) {
-          .result-screen-container {
-            padding-top: 26px;
+          .result-bar-panel {
+            top: 53%;
+            padding: 18px 20px 20px;
           }
 
-          .ending-center-panel {
-            left: 5.5%;
-            right: 5.5%;
-            top: 18.5%;
-            padding: 18px 22px;
+          .bar-list {
+            gap: 15px;
           }
 
-          .chart-layout {
-            grid-template-columns: 1fr 0.95fr;
-            gap: 12px;
+          .bar-track {
+            height: 12px;
           }
 
-          .radar-box {
-            min-height: 290px;
-          }
-
-          .bar-row {
-            grid-template-columns: 62px 1fr 42px;
-          }
-
-          .bar-label,
-          .bar-percent,
-          .ending-summary {
-            font-size: 13px;
+          .bar-name,
+          .bar-percent {
+            font-size: 15px;
           }
         }
       `}</style>
