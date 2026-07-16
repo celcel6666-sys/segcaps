@@ -202,7 +202,7 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
       ctx.textAlign = 'right';
       ctx.textBaseline = 'middle';
       // 이름이 '님의 결과 입니다' 문구와 수평 (X: 0.42), Y는 기준점에서 정확히 135px 하강
-      ctx.fillText(cardPlayerName, canvas.width * 0.42, canvas.height * 0.205 + 135);
+      ctx.fillText(cardPlayerName, canvas.width * 0.42, canvas.height * 0.205 + 285);
       ctx.restore();
     }
 
