@@ -1,5 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
-import html2canvas from 'html2canvas';
+import React, { useMemo, useState } from 'react';
 import { DEPARTMENTS } from '../data/departments';
 import type { Department } from '../data/departments';
 
@@ -10,6 +9,13 @@ import avionicsEnding from '../assets/ending/back-ascii/avionics.webp';
 import architectureEnding from '../assets/ending/back-ascii/architecture.webp';
 import militaryEnding from '../assets/ending/back-ascii/military.webp';
 import semiconductorEnding from '../assets/ending/back-ascii/semiconductor.webp';
+import mediaDown from '../assets/ending/down-ascii/media.webp';
+import nursingDown from '../assets/ending/down-ascii/nursing.webp';
+import automotiveDown from '../assets/ending/down-ascii/automotive.webp';
+import avionicsDown from '../assets/ending/down-ascii/avionics.webp';
+import architectureDown from '../assets/ending/down-ascii/architecture.webp';
+import militaryDown from '../assets/ending/down-ascii/military.webp';
+import semiconductorDown from '../assets/ending/down-ascii/semiconductor.webp';
 
 interface ResultScreenProps {
   scores: Record<string, number>;
@@ -25,6 +31,16 @@ const ENDING_IMAGES: Record<string, string> = {
   ARCHITECTURE: architectureEnding,
   MILITARY: militaryEnding,
   SEMICONDUCTOR: semiconductorEnding,
+};
+
+const DOWNLOAD_IMAGES: Record<string, string> = {
+  MEDIA: mediaDown,
+  NURSING: nursingDown,
+  AUTOMOTIVE: automotiveDown,
+  AVIONICS: avionicsDown,
+  ARCHITECTURE: architectureDown,
+  MILITARY: militaryDown,
+  SEMICONDUCTOR: semiconductorDown,
 };
 
 const DEPT_LABELS: Record<string, string> = {
@@ -52,7 +68,6 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
   badgeList,
   onReset,
 }) => {
-  const cardRef = useRef<HTMLDivElement | null>(null);
   const [shareOpen, setShareOpen] = useState(false);
 
   const recommendedDept = useMemo<Department>(() => {
@@ -65,24 +80,143 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
 
   const deptName = DEPT_LABELS[recommendedDept.id] || recommendedDept.name;
   const endingImage = ENDING_IMAGES[recommendedDept.id] || mediaEnding;
+  const downloadImage = DOWNLOAD_IMAGES[recommendedDept.id] || mediaDown;
   const shareUrl = `${window.location.origin}${window.location.pathname}?result=${recommendedDept.id}`;
   const shareText = `나에게 어울리는 세경고 학과는 ${deptName}!`;
   const isSharedEntry = window.location.search.includes('result');
 
-  const captureResultCard = async () => {
-    if (!cardRef.current) return null;
+  const getPlayerName = () => {
+    const storedName = ['playerName', 'userName', 'nickname', 'name']
+      .map((key) => window.localStorage.getItem(key)?.trim())
+      .find(Boolean);
 
-    return html2canvas(cardRef.current, {
-      useCORS: true,
-      scale: 2,
-      backgroundColor: null,
-      logging: false,
+    if (storedName) return storedName;
+
+    const typedName = window.prompt('결과 카드에 넣을 이름을 입력해 주세요.', '')?.trim();
+    if (typedName) {
+      window.localStorage.setItem('playerName', typedName);
+      return typedName;
+    }
+
+    return '';
+  };
+
+  const loadImage = (src: string) => new Promise<HTMLImageElement>((resolve, reject) => {
+    const image = new Image();
+    image.onload = () => resolve(image);
+    image.onerror = reject;
+    image.src = src;
+  });
+
+  const drawDownloadRadar = (
+    ctx: CanvasRenderingContext2D,
+    width: number,
+    height: number,
+  ) => {
+    const centerX = width * 0.762;
+    const centerY = height * 0.512;
+    const radius = width * 0.118;
+    const sides = RESULT_BARS.length;
+
+    ctx.save();
+
+    for (let level = 1; level <= 4; level += 1) {
+      const levelRadius = radius * (level / 4);
+      ctx.beginPath();
+      RESULT_BARS.forEach((_, index) => {
+        const angle = (index * 2 * Math.PI) / sides - Math.PI / 2;
+        const x = centerX + levelRadius * Math.cos(angle);
+        const y = centerY + levelRadius * Math.sin(angle);
+        if (index === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.closePath();
+      ctx.strokeStyle = '#b9d9ff';
+      ctx.lineWidth = width * 0.0032;
+      ctx.stroke();
+    }
+
+    RESULT_BARS.forEach((_, index) => {
+      const angle = (index * 2 * Math.PI) / sides - Math.PI / 2;
+      ctx.beginPath();
+      ctx.moveTo(centerX, centerY);
+      ctx.lineTo(centerX + radius * Math.cos(angle), centerY + radius * Math.sin(angle));
+      ctx.strokeStyle = '#d7eaff';
+      ctx.lineWidth = width * 0.0024;
+      ctx.stroke();
     });
+
+    const points = RESULT_BARS.map((item, index) => {
+      const score = Math.max(8, Math.min(100, scores[item.key] || 0));
+      const angle = (index * 2 * Math.PI) / sides - Math.PI / 2;
+      return {
+        x: centerX + radius * (score / 100) * Math.cos(angle),
+        y: centerY + radius * (score / 100) * Math.sin(angle),
+      };
+    });
+
+    ctx.beginPath();
+    points.forEach((point, index) => {
+      if (index === 0) ctx.moveTo(point.x, point.y);
+      else ctx.lineTo(point.x, point.y);
+    });
+    ctx.closePath();
+    ctx.fillStyle = `${recommendedDept.color.primary}33`;
+    ctx.strokeStyle = recommendedDept.color.primary;
+    ctx.lineWidth = width * 0.007;
+    ctx.fill();
+    ctx.stroke();
+
+    points.forEach((point) => {
+      ctx.beginPath();
+      ctx.arc(point.x, point.y, width * 0.011, 0, Math.PI * 2);
+      ctx.fillStyle = recommendedDept.color.primary;
+      ctx.fill();
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = width * 0.004;
+      ctx.stroke();
+    });
+
+    ctx.restore();
+  };
+
+  const createDownloadCard = async () => {
+    const playerName = getPlayerName();
+    const image = await loadImage(downloadImage);
+    const deviceScale = window.devicePixelRatio || 1;
+    const viewportWidth = Math.max(window.innerWidth || image.naturalWidth, 360);
+    const targetWidth = Math.min(image.naturalWidth, Math.max(720, Math.round(viewportWidth * deviceScale)));
+    const targetHeight = Math.round(targetWidth * (image.naturalHeight / image.naturalWidth));
+    const scale = targetWidth / image.naturalWidth;
+    const canvas = document.createElement('canvas');
+    canvas.width = targetWidth;
+    canvas.height = targetHeight;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return null;
+
+    ctx.drawImage(image, 0, 0, targetWidth, targetHeight);
+
+    if (playerName) {
+      ctx.save();
+      ctx.font = `900 ${Math.round(canvas.width * 0.038)}px sans-serif`;
+      ctx.fillStyle = '#111827';
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(playerName, canvas.width * 0.445, canvas.height * 0.282);
+      ctx.restore();
+    }
+
+    ctx.save();
+    ctx.scale(scale, scale);
+    drawDownloadRadar(ctx, image.naturalWidth, image.naturalHeight);
+    ctx.restore();
+    return canvas;
   };
 
   const handleDownloadCard = async () => {
     try {
-      const canvas = await captureResultCard();
+      const canvas = await createDownloadCard();
       if (!canvas) return;
 
       const dataUrl = canvas.toDataURL('image/png');
@@ -143,7 +277,7 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
   return (
     <div className="result-screen-container">
       <div className="ending-result-stack">
-        <div ref={cardRef} className="ending-card">
+        <div className="ending-card">
           <img src={endingImage} alt={`${deptName} 결과 배경`} className="ending-bg" draggable={false} />
 
           <section className="result-bar-panel" aria-label="적성 결과 막대 그래프">
