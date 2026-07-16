@@ -201,8 +201,8 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
       ctx.fillStyle = '#111827';
       ctx.textAlign = 'right';
       ctx.textBaseline = 'middle';
-      // 이름이 '님의 결과 입니다' 문구와 완벽히 수평인 상태로 왼쪽에 위치 (X: 0.42, Y: 0.2423 = 원본 기준 135px 하강)
-      ctx.fillText(cardPlayerName, canvas.width * 0.42, canvas.height * 0.2423);
+      // 이름이 '님의 결과 입니다' 문구와 수평 (X: 0.42), Y는 기준점에서 정확히 135px 하강
+      ctx.fillText(cardPlayerName, canvas.width * 0.42, canvas.height * 0.205 + 135);
       ctx.restore();
     }
 
