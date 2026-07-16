@@ -1,33 +1,51 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import html2canvas from 'html2canvas';
-import { DEPARTMENTS, DEUMI_EXPRESSIONS } from '../data/departments';
+import { DEPARTMENTS } from '../data/departments';
 import type { Department } from '../data/departments';
 
-// 공유 카드 배경 이미지 임포트
-import archShare from '../assets/공유이미지/건축.webp';
-import militaryShare from '../assets/공유이미지/군특성화.webp';
-import mediaShare from '../assets/공유이미지/미디.webp';
-import semiconShare from '../assets/공유이미지/반도체.webp';
-import nursingShare from '../assets/공유이미지/보건.webp';
-import autoShare from '../assets/공유이미지/자동차.webp';
-import avionicsShare from '../assets/공유이미지/항공전자.webp';
-
-const DEPT_SHARE_IMAGES: Record<string, { img: string; shortName: string }> = {
-  MEDIA: { img: mediaShare, shortName: '미디' },
-  NURSING: { img: nursingShare, shortName: '보건' },
-  AUTOMOTIVE: { img: autoShare, shortName: '자동차' },
-  AVIONICS: { img: avionicsShare, shortName: '항공전자' },
-  ARCHITECTURE: { img: archShare, shortName: '건축' },
-  MILITARY: { img: militaryShare, shortName: '군특성화' },
-  SEMICONDUCTOR: { img: semiconShare, shortName: '반도체' },
-};
-
+import mediaEnding from '../assets/ending/back-ascii/media.webp';
+import nursingEnding from '../assets/ending/back-ascii/nursing.webp';
+import automotiveEnding from '../assets/ending/back-ascii/automotive.webp';
+import avionicsEnding from '../assets/ending/back-ascii/avionics.webp';
+import architectureEnding from '../assets/ending/back-ascii/architecture.webp';
+import militaryEnding from '../assets/ending/back-ascii/military.webp';
+import semiconductorEnding from '../assets/ending/back-ascii/semiconductor.webp';
 
 interface ResultScreenProps {
   scores: Record<string, number>;
   badgeList: string[];
   onReset: () => void;
 }
+
+const ENDING_IMAGES: Record<string, string> = {
+  MEDIA: mediaEnding,
+  NURSING: nursingEnding,
+  AUTOMOTIVE: automotiveEnding,
+  AVIONICS: avionicsEnding,
+  ARCHITECTURE: architectureEnding,
+  MILITARY: militaryEnding,
+  SEMICONDUCTOR: semiconductorEnding,
+};
+
+const DEPT_LABELS: Record<string, string> = {
+  MEDIA: '미디어디자인과',
+  NURSING: '보건간호과',
+  AUTOMOTIVE: '미래자동차과',
+  AVIONICS: '항공전자과',
+  ARCHITECTURE: '건축디자인과',
+  MILITARY: '군특성화과',
+  SEMICONDUCTOR: '반도체디스플레이과',
+};
+
+const RADAR_LABELS = [
+  { name: '예술성', key: 'artistic' },
+  { name: '배려심', key: 'caring' },
+  { name: '논리력', key: 'logical' },
+  { name: '공간감', key: 'spatial' },
+  { name: '기술력', key: 'technical' },
+  { name: '정밀성', key: 'precision' },
+  { name: '책임감', key: 'responsibility' },
+];
 
 export const ResultScreen: React.FC<ResultScreenProps> = ({
   scores,
@@ -36,791 +54,535 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const cardRef = useRef<HTMLDivElement | null>(null);
+  const [shareOpen, setShareOpen] = useState(false);
 
-  // 성향 라벨 및 점수 데이터
-  const radarLabels = [
-    { name: '🎨 예술성', key: 'artistic' },
-    { name: '💉 배려심', key: 'caring' },
-    { name: '🧮 논리력', key: 'logical' },
-    { name: '📐 공간지각', key: 'spatial' },
-    { name: '🛠️ 기술성', key: 'technical' },
-    { name: '✈️ 정밀성', key: 'precision' },
-    { name: '🪖 책임성', key: 'responsibility' },
-  ];
+  const recommendedDept = useMemo<Department>(() => {
+    return DEPARTMENTS.reduce((best, dept) => {
+      const bestScore = scores[best.scoreKey] || 0;
+      const deptScore = scores[dept.scoreKey] || 0;
+      return deptScore > bestScore ? dept : best;
+    }, DEPARTMENTS[0]);
+  }, [scores]);
 
-  // 1. 가장 높은 점수의 학과 진단
-  let recommendedDept: Department = DEPARTMENTS[0];
-  let maxScore = -1;
-
-  DEPARTMENTS.forEach(dept => {
-    const score = scores[dept.scoreKey] || 0;
-    if (score > maxScore) {
-      maxScore = score;
-      recommendedDept = dept;
-    }
-  });
-
+  const deptName = DEPT_LABELS[recommendedDept.id] || recommendedDept.name;
+  const endingImage = ENDING_IMAGES[recommendedDept.id] || mediaEnding;
+  const shareUrl = `${window.location.origin}${window.location.pathname}?result=${recommendedDept.id}`;
+  const shareText = `나에게 어울리는 세경고 학과는 ${deptName}!`;
   const isSharedEntry = window.location.search.includes('result');
 
-  // 캐릭터 표정 해맑은 버전으로 반환 (듬이는 smile, 그 외 학과는 고유 캐릭터)
-  const getResultCharacterImage = () => {
-    if (recommendedDept.id === 'MEDIA') {
-      return DEUMI_EXPRESSIONS.smile;
-    }
-    return recommendedDept.characterImage;
-  };
-
-  // 2. HTML5 Canvas 레이더 차트 드로잉 (DPI 스케일 및 최대 30점 스케일 보정 완료)
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    const ctx = canvas?.getContext('2d');
+    if (!canvas || !ctx) return;
 
     const dpr = window.devicePixelRatio || 1;
-    const logicalWidth = 340;
-    const logicalHeight = 260;
+    const width = 320;
+    const height = 250;
+    const centerX = width / 2;
+    const centerY = height / 2 + 8;
+    const radius = 72;
 
-    canvas.width = logicalWidth * dpr;
-    canvas.height = logicalHeight * dpr;
-    canvas.style.width = `${logicalWidth}px`;
-    canvas.style.height = `${logicalHeight}px`;
+    canvas.width = width * dpr;
+    canvas.height = height * dpr;
+    canvas.style.width = `${width}px`;
+    canvas.style.height = `${height}px`;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, width, height);
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.scale(dpr, dpr); 
-
-    const centerX = logicalWidth / 2;
-    const centerY = logicalHeight / 2;
-    const radius = Math.min(logicalWidth, logicalHeight) * 0.26; 
-    const totalSides = radarLabels.length;
-
-    // (1) 배경 다각형 가이드라인 그리기 (3단계 레벨 라인)
-    const levels = 3;
-    for (let j = 1; j <= levels; j++) {
-      const levelRadius = radius * (j / levels);
+    for (let level = 1; level <= 4; level += 1) {
+      const levelRadius = radius * (level / 4);
       ctx.beginPath();
-      for (let i = 0; i < totalSides; i++) {
-        const angle = (i * 2 * Math.PI) / totalSides - Math.PI / 2;
+      RADAR_LABELS.forEach((_, index) => {
+        const angle = (index * 2 * Math.PI) / RADAR_LABELS.length - Math.PI / 2;
         const x = centerX + levelRadius * Math.cos(angle);
         const y = centerY + levelRadius * Math.sin(angle);
-        if (i === 0) ctx.moveTo(x, y);
+        if (index === 0) ctx.moveTo(x, y);
         else ctx.lineTo(x, y);
-      }
+      });
       ctx.closePath();
-      ctx.strokeStyle = '#f1f5f9';
-      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = '#dbeafe';
+      ctx.lineWidth = 1.4;
       ctx.stroke();
-      
-      ctx.fillStyle = j % 2 === 0 ? 'rgba(241, 245, 249, 0.2)' : 'rgba(255, 255, 255, 0)';
-      ctx.fill();
     }
 
-    // (2) 축 선(Axis lines) 그리기
-    ctx.beginPath();
-    for (let i = 0; i < totalSides; i++) {
-      const angle = (i * 2 * Math.PI) / totalSides - Math.PI / 2;
+    RADAR_LABELS.forEach((_, index) => {
+      const angle = (index * 2 * Math.PI) / RADAR_LABELS.length - Math.PI / 2;
+      ctx.beginPath();
       ctx.moveTo(centerX, centerY);
       ctx.lineTo(centerX + radius * Math.cos(angle), centerY + radius * Math.sin(angle));
-    }
-    ctx.strokeStyle = '#e2e8f0';
-    ctx.lineWidth = 1;
-    ctx.stroke();
+      ctx.strokeStyle = '#e2e8f0';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    });
 
-    // (3) 실제 유저 점수 다각형 그리기 (만점 100점 기준 배점 스케일)
+    const points = RADAR_LABELS.map((label, index) => {
+      const score = Math.max(8, Math.min(100, scores[label.key] || 0));
+      const angle = (index * 2 * Math.PI) / RADAR_LABELS.length - Math.PI / 2;
+      return {
+        x: centerX + radius * (score / 100) * Math.cos(angle),
+        y: centerY + radius * (score / 100) * Math.sin(angle),
+      };
+    });
+
     ctx.beginPath();
-    const dataPoints: { x: number; y: number }[] = [];
-    radarLabels.forEach((label, i) => {
-      const score = scores[label.key] || 0;
-      const ratio = Math.max(0.08, Math.min(100, score)) / 100; // 분모를 100점(배점 합산 만점)으로 설정
-      const angle = (i * 2 * Math.PI) / totalSides - Math.PI / 2;
-      const x = centerX + radius * ratio * Math.cos(angle);
-      const y = centerY + radius * ratio * Math.sin(angle);
-      dataPoints.push({ x, y });
-      
-      if (i === 0) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
+    points.forEach((point, index) => {
+      if (index === 0) ctx.moveTo(point.x, point.y);
+      else ctx.lineTo(point.x, point.y);
     });
     ctx.closePath();
-
-    ctx.fillStyle = `${recommendedDept.color.primary}33`; 
-    ctx.fill();
+    ctx.fillStyle = `${recommendedDept.color.primary}33`;
     ctx.strokeStyle = recommendedDept.color.primary;
-    ctx.lineWidth = 3.5;
+    ctx.lineWidth = 3;
+    ctx.fill();
     ctx.stroke();
 
-    // 데이터 교차점 둥근 원 그리기
-    dataPoints.forEach(pt => {
+    points.forEach((point) => {
       ctx.beginPath();
-      ctx.arc(pt.x, pt.y, 4, 0, 2 * Math.PI);
+      ctx.arc(point.x, point.y, 4, 0, Math.PI * 2);
       ctx.fillStyle = recommendedDept.color.primary;
       ctx.fill();
       ctx.strokeStyle = '#ffffff';
-      ctx.lineWidth = 1.5;
+      ctx.lineWidth = 2;
       ctx.stroke();
     });
 
-    // (4) 텍스트 라벨 배치
-    ctx.font = 'bold 12px OngeulipMitmi, sans-serif';
-    ctx.fillStyle = '#64748b';
-    ctx.textAlign = 'center';
+    ctx.font = '700 12px sans-serif';
+    ctx.fillStyle = '#334155';
     ctx.textBaseline = 'middle';
-
-    radarLabels.forEach((label, i) => {
-      const angle = (i * 2 * Math.PI) / totalSides - Math.PI / 2;
-      const textX = centerX + (radius + 20) * Math.cos(angle);
-      const textY = centerY + (radius + 12) * Math.sin(angle);
-
-      if (Math.cos(angle) > 0.1) ctx.textAlign = 'left';
-      else if (Math.cos(angle) < -0.1) ctx.textAlign = 'right';
-      else ctx.textAlign = 'center';
-
-      ctx.fillText(label.name, textX, textY);
+    RADAR_LABELS.forEach((label, index) => {
+      const angle = (index * 2 * Math.PI) / RADAR_LABELS.length - Math.PI / 2;
+      const x = centerX + (radius + 28) * Math.cos(angle);
+      const y = centerY + (radius + 20) * Math.sin(angle);
+      ctx.textAlign = Math.cos(angle) > 0.2 ? 'left' : Math.cos(angle) < -0.2 ? 'right' : 'center';
+      ctx.fillText(label.name, x, y);
     });
-  }, [scores, recommendedDept]);
+  }, [recommendedDept.color.primary, scores]);
 
-  // html2canvas 기반 결과 카드 고화질 PNG 캡처 다운로드 (엽서 전체 영역 복제)
+  const captureResultCard = async () => {
+    if (!cardRef.current) return null;
+
+    return html2canvas(cardRef.current, {
+      useCORS: true,
+      scale: 2,
+      backgroundColor: null,
+      logging: false,
+    });
+  };
+
   const handleDownloadCard = async () => {
-    const cardWrapperEl = cardRef.current;
-    if (!cardWrapperEl) return;
     try {
-      const canvas = await html2canvas(cardWrapperEl, {
-        useCORS: true,
-        scale: 2, 
-        backgroundColor: null, 
-        logging: false,
-        scrollX: 0,
-        scrollY: 0
-      });
+      const canvas = await captureResultCard();
+      if (!canvas) return;
+
       const dataUrl = canvas.toDataURL('image/png');
-      const downloadLink = document.createElement('a');
-      downloadLink.download = `segyeong_postcard_${recommendedDept.id}.png`;
-      downloadLink.href = dataUrl;
-      downloadLink.click();
-    } catch (err) {
-      console.error('카드 이미지 저장 오류:', err);
-      alert('카드 다운로드에 실패했습니다. 최신 브라우저를 이용해주세요.');
+      const link = document.createElement('a');
+      link.download = `segyeong_result_${recommendedDept.id}.png`;
+      link.href = dataUrl;
+      link.click();
+    } catch {
+      alert('이미지 저장에 실패했습니다. 브라우저를 최신 버전으로 업데이트한 뒤 다시 시도해 주세요.');
     }
   };
 
-  const handleShare = () => {
-    const shareUrl = `${window.location.origin}${window.location.pathname}?result=${recommendedDept.id}`;
-    if (navigator.clipboard) {
-      navigator.clipboard.writeText(shareUrl).then(() => {
-        alert('학과 진단 분석 카드가 복사되었습니다! 친구들에게 추천해 보세요! 🔗');
-      }).catch(() => {
-        fallbackCopy(shareUrl);
-      });
-    } else {
-      fallbackCopy(shareUrl);
-    }
-  };
-
-  const fallbackCopy = (text: string) => {
-    const tempInput = document.createElement('input');
-    tempInput.value = text;
-    document.body.appendChild(tempInput);
-    tempInput.select();
+  const copyShareLink = async () => {
     try {
+      await navigator.clipboard.writeText(shareUrl);
+      alert('공유 링크가 복사되었습니다.');
+    } catch {
+      const input = document.createElement('input');
+      input.value = shareUrl;
+      document.body.appendChild(input);
+      input.select();
       document.execCommand('copy');
-      alert('학과 진단 분석 카드가 복사되었습니다! 친구들에게 추천해 보세요! 🔗');
-    } catch (e) {
-      alert('공유 링크: ' + text);
+      document.body.removeChild(input);
+      alert('공유 링크가 복사되었습니다.');
     }
-    document.body.removeChild(tempInput);
   };
 
-  const handleGoToTest = () => {
-    window.location.href = window.location.origin + window.location.pathname;
+  const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: '세경고 학과 추천 결과',
+          text: shareText,
+          url: shareUrl,
+        });
+        return;
+      } catch {
+        // The platform share sheet was dismissed, so fall back to the in-page options.
+      }
+    }
+
+    setShareOpen(true);
   };
+
+  const openShareWindow = (url: string) => {
+    window.open(url, '_blank', 'noopener,noreferrer,width=720,height=640');
+  };
+
+  const encodedUrl = encodeURIComponent(shareUrl);
+  const encodedText = encodeURIComponent(shareText);
+  const shareLinks = [
+    { label: '카카오스토리', url: `https://story.kakao.com/share?url=${encodedUrl}` },
+    { label: '페이스북', url: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}` },
+    { label: 'X', url: `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedText}` },
+    { label: '라인', url: `https://social-plugins.line.me/lineit/share?url=${encodedUrl}&text=${encodedText}` },
+    { label: '밴드', url: `https://band.us/plugin/share?body=${encodedText}%0A${encodedUrl}&route=${encodedUrl}` },
+  ];
 
   return (
     <div className="result-screen-container">
-      {/* 듬이 엔딩 축하 말풍선 */}
-      <div className="result-intro-speech">
-        🏆 모든 학과 탐험 완료! 수고 많았어 친구! 네 강점을 가득 담은 진단서가 발급되었어.
-      </div>
+      <div className="ending-card-wrap">
+        <div ref={cardRef} className="ending-card">
+          <img src={endingImage} alt={`${deptName} 결과 배경`} className="ending-bg" draggable={false} />
 
-      {/* 캡처 전용 숨겨진 카드 (화면 밖 배치) */}
-      <div className="share-card-download-area">
-        <div ref={cardRef} className="share-card-container">
-          <img 
-            src={DEPT_SHARE_IMAGES[recommendedDept.id].img} 
-            alt="background" 
-            className="share-card-bg"
-          />
-          {/* 중앙 상단 문구 */}
-          <div className="share-card-title">
-            <span style={{ color: recommendedDept.color.primary }}>
-              {DEPT_SHARE_IMAGES[recommendedDept.id].shortName}과
-            </span>
-            를 추천합니다!
-          </div>
+          <div className="ending-center-panel">
+            <div className="ending-title">
+              <span>{deptName}</span>
+              <strong>추천 결과</strong>
+            </div>
 
-          {/* 능력치 부분 막대 그래프 */}
-          <div className="share-card-stats">
-            <div className="share-graph-box">
-            {radarLabels.map((lbl) => {
-              const score = scores[lbl.key] || 0;
-              const percent = Math.min(100, Math.round(score));
-              return (
-                <div key={lbl.key} className="share-bar-row">
-                  <span className="share-bar-label">{lbl.name}</span>
-                  <div className="share-bar-track">
-                    <div
-                      className="share-bar-fill"
-                      style={{
-                        width: `${percent}%`,
-                        backgroundColor: recommendedDept.color.primary
-                      }}
-                    />
-                  </div>
-                  <span className="share-bar-percent" style={{ color: recommendedDept.color.primary }}>
-                    {percent}%
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-          </div>
-        </div>
-      </div>
-
-      {/* 최종 추천 학과 카드 래퍼 (원래 화면 복구) */}
-      <div className="recommended-card-outer-wrap">
-        
-        {/* 캐릭터가 프레임 뒤로 쏙 안착하도록 top 좌표 하향 안정화 적용 */}
-        <div className="result-char-illust-wrap">
-          <img 
-            src={getResultCharacterImage()} 
-            alt={recommendedDept.characterName} 
-            className="result-char-illust-img"
-            draggable={false}
-          />
-        </div>
-
-        {/* 결과 프레임 요약 카드 (배지를 흐름 내부로 합쳐서 정합성 복구) */}
-        <div 
-          className="recommended-dept-card"
-          style={{
-            borderColor: recommendedDept.color.primary,
-            boxShadow: `0 10px 0 ${recommendedDept.color.shadow}`,
-            backgroundColor: recommendedDept.color.light,
-          }}
-        >
-          {/* 📍 겹침을 방지하기 위해 텍스트 흐름에 자연스럽게 합쳐진 전공 배지 */}
-          <div 
-            className="result-tag-merged" 
-            style={{ 
-              backgroundColor: recommendedDept.color.primary,
-              color: '#ffffff'
-            }}
-          >
-            나에게 가장 어울리는 전공
-          </div>
-          
-          <div className="result-sub-type">
-            성격 유형: "{recommendedDept.resultTitle}"
-          </div>
-
-          <h1 className="result-dept-title" style={{ color: recommendedDept.color.primary }}>
-            {recommendedDept.name}
-          </h1>
-          {/* Recommendation text */}
-          <p className="recommendation-text">{recommendedDept.name}과를 추천합니다!</p>
-
-          <p className="result-dept-desc">
-            {recommendedDept.description}
-          </p>
-
-          {/* 프리미엄 카드 마킹 엠블럼 해시태그 */}
-          <div className="card-mbti-tags">
-            <span className="mbti-tag" style={{ color: recommendedDept.color.primary, backgroundColor: '#ffffff', borderColor: recommendedDept.color.primary }}>
-              # 세경고_추천_1위
-            </span>
-            <span className="mbti-tag" style={{ color: recommendedDept.color.primary, backgroundColor: '#ffffff', borderColor: recommendedDept.color.primary }}>
-              # {recommendedDept.badgeName.split(' ')[1] || '전공'}마스터
-            </span>
-          </div>
-        </div>
-
-      </div>
-
-      {/* 성향 수치 시각화 (레이더 차트 + 백분율 스케일 보정된 바 차트) */}
-      <div className="result-chart-section">
-        <h3 className="section-title">📊 나의 7대 적성 지표</h3>
-        
-        <div className="canvas-wrapper">
-          <canvas ref={canvasRef} width={340} height={260} />
-        </div>
-
-        {/* 100점 만점 기준의 배점 기반 백분율 바 차트 */}
-        <div className="bar-charts-container">
-          {radarLabels.map((lbl) => {
-            const score = scores[lbl.key] || 0;
-            // 📍 각 문제 배점 합산 100점 만점 기준으로 정확한 백분율 계산
-            const percent = Math.min(100, Math.round(score)); 
-            return (
-              <div key={lbl.key} className="bar-chart-row">
-                <span className="bar-label">{lbl.name}</span>
-                <div className="bar-track">
-                  <div 
-                    className="bar-fill" 
-                    style={{
-                      width: `${percent}%`,
-                      backgroundColor: recommendedDept.color.primary
-                    }}
-                  />
-                </div>
-                <span className="bar-percent" style={{ color: recommendedDept.color.primary }}>
-                  {percent}%
-                </span>
+            <div className="chart-layout">
+              <div className="radar-box">
+                <canvas ref={canvasRef} width={320} height={250} />
               </div>
-            );
-          })}
-        </div>
-      </div>
 
-      {/* 수집한 뱃지 현황 */}
-      <div className="result-badge-section">
-        <h3 className="section-title">🎖️ 모은 전공 뱃지 ({badgeList.length}/7)</h3>
-        <div className="badge-grid">
-          {DEPARTMENTS.map(dept => {
-            const hasBadge = badgeList.includes(dept.id);
-            return (
-              <div 
-                key={dept.id} 
-                className={`badge-showcase-item ${hasBadge ? 'acquired' : 'locked'}`}
-                style={{
-                  borderColor: hasBadge ? dept.color.primary : '#e2e8f0',
-                  backgroundColor: hasBadge ? dept.color.light : '#f8fafc',
-                }}
-              >
-                <div className="badge-icon-wrap" style={{ opacity: hasBadge ? 1 : 0.25 }}>
-                  {hasBadge ? dept.badgeIcon : '🔒'}
-                </div>
-                <div className="badge-info-name" style={{ color: hasBadge ? dept.color.primary : '#94a3b8' }}>
-                  {dept.name.substring(0, 5)}...
-                </div>
+              <div className="bar-list">
+                {RADAR_LABELS.map((label) => {
+                  const percent = Math.min(100, Math.round(scores[label.key] || 0));
+                  return (
+                    <div key={label.key} className="bar-row">
+                      <span className="bar-label">{label.name}</span>
+                      <div className="bar-track">
+                        <div
+                          className="bar-fill"
+                          style={{
+                            width: `${percent}%`,
+                            backgroundColor: recommendedDept.color.primary,
+                          }}
+                        />
+                      </div>
+                      <span className="bar-percent">{percent}%</span>
+                    </div>
+                  );
+                })}
               </div>
-            );
-          })}
+            </div>
+
+            <p className="ending-summary">
+              획득 배지 {badgeList.length}/7개 · 가장 높은 적성은 {deptName}와 잘 어울립니다.
+            </p>
+          </div>
         </div>
       </div>
 
-      {/* 피그마 3D 액션 버튼 영역 */}
       <div className="result-actions">
-        <button 
-          className="result-btn download-btn"
-          onClick={handleDownloadCard}
-          style={{
-            backgroundColor: '#10b981',
-            borderColor: '#10b981',
-            boxShadow: '0 6px 0 #047857',
-            color: '#ffffff'
-          }}
-        >
-          🖼️ 결과 카드 저장하기
+        <button className="result-btn share-btn" onClick={handleShare}>
+          공유하기
         </button>
-
-        <button 
-          className="result-btn share-btn"
-          onClick={handleShare}
-          style={{
-            backgroundColor: recommendedDept.color.primary,
-            borderColor: recommendedDept.color.primary,
-            boxShadow: `0 6px 0 ${recommendedDept.color.shadow}`
-          }}
-        >
-          🔗 결과 링크 공유하기
+        <button className="result-btn download-btn" onClick={handleDownloadCard}>
+          이미지 저장하기
         </button>
-
         {isSharedEntry ? (
-          <button 
-            className="result-btn restart-btn invite-btn"
-            onClick={handleGoToTest}
-            style={{
-              backgroundColor: '#facc15',
-              borderColor: '#facc15',
-              boxShadow: '0 6px 0 #ca8a04',
-              color: '#1e293b'
-            }}
-          >
-            🚀 나도 분석 테스트하러 가기
+          <button className="result-btn restart-btn" onClick={() => {
+            window.location.href = window.location.origin + window.location.pathname;
+          }}>
+            나도 테스트하기
           </button>
         ) : (
-          <button 
-            className="result-btn restart-btn"
-            onClick={onReset}
-            style={{
-              backgroundColor: '#ffffff',
-              borderColor: '#cbd5e1',
-              boxShadow: '0 6px 0 #94a3b8',
-              color: '#475569'
-            }}
-          >
+          <button className="result-btn restart-btn" onClick={onReset}>
             처음부터 다시하기
           </button>
         )}
       </div>
+
+      {shareOpen && (
+        <div className="share-modal-backdrop" role="presentation" onClick={() => setShareOpen(false)}>
+          <div className="share-modal" role="dialog" aria-modal="true" aria-label="SNS 공유하기" onClick={(event) => event.stopPropagation()}>
+            <div className="share-modal-head">
+              <strong>SNS 공유하기</strong>
+              <button type="button" onClick={() => setShareOpen(false)} aria-label="닫기">×</button>
+            </div>
+            <div className="share-platform-grid">
+              {shareLinks.map((link) => (
+                <button key={link.label} type="button" onClick={() => openShareWindow(link.url)}>
+                  {link.label}
+                </button>
+              ))}
+              <button type="button" onClick={copyShareLink}>
+                링크 복사
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <style>{`
         .result-screen-container {
           width: 100%;
           height: 100%;
           overflow-y: auto;
-          padding: 20px 16px 40px 16px;
+          padding: 18px 14px 34px;
           display: flex;
           flex-direction: column;
-          gap: 24px;
+          gap: 18px;
+          background: #f8fafc;
         }
 
-        .result-screen-container::-webkit-scrollbar {
-          width: 4px;
-        }
-        .result-screen-container::-webkit-scrollbar-thumb {
-          background-color: rgba(0, 0, 0, 0.15);
-          border-radius: 4px;
-        }
-
-        .result-intro-speech {
-          background-color: #ffffff;
-          border: 3px solid #cbd5e1;
-          border-radius: 16px;
-          padding: 12px 16px;
-          font-size: 16px;
-          color: #334155;
-          font-weight: 500;
-          text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5);
-          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-          line-height: 1.4;
-        }
-
-        /* 캐릭터와 프레임 Z-index 결합 래퍼 */
-        .recommended-card-outer-wrap {
-          position: relative;
-          width: 100%;
-          margin-top: 44px;
-          padding-top: 110px;
-        }
-
-        /* 캐릭터는 프레임 뒤(z-index: 1)로 배치 */
-        .result-char-illust-wrap {
-          position: absolute;
-          top: -55px;
-          left: 50%;
-          transform: translateX(-50%);
-          height: 220px;
+        .ending-card-wrap {
           width: 100%;
           display: flex;
           justify-content: center;
-          align-items: flex-end;
-          z-index: 1; 
-          pointer-events: none;
         }
 
-        .result-char-illust-img {
-          height: 100%;
-          max-height: 220px;
-          width: auto;
-          object-fit: contain;
-          filter: drop-shadow(0 6px 8px rgba(0, 0, 0, 0.18));
-        }
-
-        /* 프레임 카드는 z-index: 2로 앞에 노출, 투명하지 않은 배경 */
-        .recommended-dept-card {
+        .ending-card {
           position: relative;
-          width: 100%;
-          border: 4px solid;
-          border-radius: 24px;
-          padding: 28px 20px 24px 20px;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          text-align: center;
-          z-index: 2; 
-        }
-
-        /* 📍 합쳐져서 내부로 안착된 전공 타이틀 배지 */
-        .result-tag-merged {
-          font-family: var(--font-mitmi), sans-serif;
-          font-size: 15px;
-          font-weight: bold;
-          padding: 6px 20px;
-          border-radius: 20px;
-          margin-bottom: 16px;
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-          display: inline-block;
-        }
-
-        .result-sub-type {
-          font-size: 16px;
-          color: #64748b;
-          margin-bottom: 8px;
-        }
-
-        .result-dept-title {
-          font-size: 25px;
-          line-height: 1.2;
-          margin-bottom: 12px;
-          text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-        }
-
-        .result-dept-desc {
-          font-size: 16px;
-          line-height: 1.5;
-          color: #475569;
-          margin-bottom: 18px;
-        }
-
-        /* 프리미엄 카드 마킹 엠블럼 해시태그 */
-        .card-mbti-tags {
-          display: flex;
-          gap: 8px;
-          justify-content: center;
-          width: 100%;
-        }
-
-        .mbti-tag {
-          font-size: 12px;
-          padding: 4px 10px;
-          border-radius: 20px;
-          border: 1.5px solid;
-          font-family: var(--font-mitmi), sans-serif;
-        }
-
-        /* 캡처 전용 숨겨진 카드 영역 스타일 */
-        .share-card-download-area {
-          position: absolute;
-          top: 0;
-          left: -9999px;
-          width: 540px;
-          height: 810px;
-          z-index: -9999;
-          opacity: 1;
-          pointer-events: none;
-        }
-
-        .share-card-container {
-          position: relative;
-          width: 540px;
-          height: 810px;
+          width: min(100%, 560px);
+          aspect-ratio: 2 / 3;
           overflow: hidden;
-          box-sizing: border-box;
-          background-color: #ffffff;
+          border-radius: 18px;
+          background: #ffffff;
+          box-shadow: 0 14px 34px rgba(15, 23, 42, 0.16);
         }
 
-        .share-card-bg {
+        .ending-bg {
           position: absolute;
-          top: 0;
-          left: 0;
+          inset: 0;
           width: 100%;
           height: 100%;
-          z-index: 1;
           object-fit: cover;
+          user-select: none;
         }
 
-        .share-card-title {
+        .ending-center-panel {
           position: absolute;
-          top: 6.5%;
-          left: 50%;
-          transform: translateX(-50%);
-          font-family: var(--font-mitmi), sans-serif;
-          font-size: 30px;
-          font-weight: bold;
-          color: #1e293b;
+          left: 7.2%;
+          right: 7.2%;
+          top: 24.5%;
+          min-height: 45%;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          gap: 10px;
+          padding: 12px 14px;
+          border-radius: 14px;
+          background: rgba(255, 255, 255, 0.86);
+          box-sizing: border-box;
+        }
+
+        .ending-title {
+          display: flex;
+          align-items: baseline;
+          justify-content: center;
+          gap: 8px;
+          color: #0f172a;
           text-align: center;
           white-space: nowrap;
-          text-shadow: 2px 2px 0px #ffffff, -2px -2px 0px #ffffff, 2px -2px 0px #ffffff, -2px 2px 0px #ffffff;
-          z-index: 2;
         }
 
-        .share-card-stats {
-          position: absolute;
-          bottom: 10.5%;
-          left: 10%;
-          right: 10%;
-          display: flex;
-          flex-direction: column;
-          gap: 10px;
-          box-sizing: border-box;
-          z-index: 2;
-        }
-
-        .share-bar-row {
-          display: flex;
-          align-items: center;
-          width: 100%;
-          gap: 12px;
-        }
-
-        .share-bar-label {
-          font-family: var(--font-mitmi), sans-serif;
-          font-size: 18px;
-          font-weight: bold;
-          color: #334155;
-          width: 100px;
-          text-align: left;
-          text-shadow: 1px 1px 0px #ffffff, -1px -1px 0px #ffffff;
-        }
-
-        .share-bar-track {
-          flex: 1;
-          height: 16px;
-          background-color: rgba(226, 232, 240, 0.7);
-          border-radius: 8px;
-          overflow: hidden;
-          border: 1px solid rgba(203, 213, 225, 0.3);
-        }
-
-        .share-bar-fill {
-          height: 100%;
-          border-radius: 8px;
-        }
-
-        .share-bar-percent {
-          font-family: var(--font-mitmi), sans-serif;
-          font-size: 18px;
-          font-weight: bold;
-          width: 50px;
-          text-align: right;
-          text-shadow: 1px 1px 0px #ffffff, -1px -1px 0px #ffffff;
-        }
-
-        .result-chart-section {
-          width: 100%;
-          background-color: #ffffff;
-          border: 3px solid #e2e8f0;
-          border-radius: 20px;
-          padding: 16px;
-          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
-        }
-
-        .section-title {
+        .ending-title span {
           font-size: 17px;
-          color: #334155;
-          margin-bottom: 14px;
+          font-weight: 700;
+          color: ${recommendedDept.color.primary};
         }
 
-        .canvas-wrapper {
-          width: 100%;
+        .ending-title strong {
+          font-size: 20px;
+        }
+
+        .chart-layout {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 6px;
+          align-items: center;
+        }
+
+        .radar-box {
           display: flex;
           justify-content: center;
-          align-items: center;
-          margin-bottom: 16px;
+          min-height: 190px;
+          overflow: hidden;
         }
 
-        /* 가로형 적성 지표 바 차트 스타일 */
-        .bar-charts-container {
+        .radar-box canvas {
+          max-width: 100%;
+          height: auto !important;
+        }
+
+        .bar-list {
           display: flex;
           flex-direction: column;
-          gap: 10px;
-          width: 100%;
-          padding: 0 8px;
+          gap: 7px;
         }
 
-        .bar-chart-row {
-          display: flex;
+        .bar-row {
+          display: grid;
+          grid-template-columns: 54px 1fr 36px;
+          gap: 8px;
           align-items: center;
-          width: 100%;
-          gap: 12px;
         }
 
-        .bar-label {
-          font-size: 13px;
-          color: #475569;
-          width: 76px;
-          text-align: left;
+        .bar-label,
+        .bar-percent {
+          font-size: 12px;
+          font-weight: 700;
+          color: #334155;
+          line-height: 1;
+        }
+
+        .bar-percent {
+          text-align: right;
         }
 
         .bar-track {
-          flex: 1;
-          height: 12px;
-          background-color: #f1f5f9;
-          border-radius: 6px;
+          height: 10px;
           overflow: hidden;
+          border-radius: 999px;
+          background: #e2e8f0;
         }
 
         .bar-fill {
           height: 100%;
-          border-radius: 6px;
-          transition: width 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
+          border-radius: 999px;
         }
 
-        .bar-percent {
-          font-size: 13px;
-          font-weight: 500;
-          width: 38px;
-          text-align: right;
-        }
-
-        .result-badge-section {
-          width: 100%;
-          background-color: #ffffff;
-          border: 3px solid #e2e8f0;
-          border-radius: 20px;
-          padding: 16px;
-          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
-        }
-
-        .badge-grid {
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: 10px;
-        }
-
-        .badge-showcase-item {
-          border: 2px solid;
-          border-radius: 12px;
-          padding: 8px 4px;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          gap: 4px;
+        .ending-summary {
+          margin: 2px 0 0;
           text-align: center;
-        }
-
-        .badge-icon-wrap {
-          font-size: 24px;
-          transition: transform 0.2s ease;
-        }
-
-        .badge-showcase-item.acquired:hover .badge-icon-wrap {
-          transform: scale(1.2) rotate(8deg);
-        }
-
-        .badge-info-name {
-          font-size: 11px;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          width: 100%;
+          font-size: 12px;
+          line-height: 1.35;
+          color: #475569;
+          font-weight: 700;
         }
 
         .result-actions {
-          width: 100%;
-          display: flex;
-          flex-direction: column;
-          gap: 14px;
+          width: min(100%, 560px);
+          margin: 0 auto;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 10px;
         }
 
         .result-btn {
-          width: 100%;
-          height: 52px;
-          border: 3px solid;
-          border-radius: 16px;
-          font-size: 18px;
+          height: 50px;
+          border: 0;
+          border-radius: 14px;
+          font-size: 16px;
+          font-weight: 800;
           color: #ffffff;
           cursor: pointer;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          transition: all 0.15s ease;
+          box-shadow: 0 6px 0 rgba(15, 23, 42, 0.2);
+          transition: transform 0.15s ease, box-shadow 0.15s ease;
         }
 
         .result-btn:active {
           transform: translateY(3px);
-          box-shadow: 0 2px 0 rgba(0, 0, 0, 0.35) !important;
+          box-shadow: 0 3px 0 rgba(15, 23, 42, 0.24);
+        }
+
+        .share-btn {
+          background: ${recommendedDept.color.primary};
+        }
+
+        .download-btn {
+          background: #10b981;
+        }
+
+        .restart-btn {
+          grid-column: 1 / -1;
+          background: #475569;
+        }
+
+        .share-modal-backdrop {
+          position: fixed;
+          inset: 0;
+          z-index: 50;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 24px;
+          background: rgba(15, 23, 42, 0.55);
+        }
+
+        .share-modal {
+          width: min(100%, 360px);
+          border-radius: 18px;
+          background: #ffffff;
+          padding: 16px;
+          box-shadow: 0 18px 40px rgba(15, 23, 42, 0.24);
+        }
+
+        .share-modal-head {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 14px;
+          color: #0f172a;
+        }
+
+        .share-modal-head strong {
+          font-size: 18px;
+        }
+
+        .share-modal-head button {
+          width: 32px;
+          height: 32px;
+          border: 0;
+          border-radius: 50%;
+          background: #f1f5f9;
+          color: #334155;
+          font-size: 24px;
+          line-height: 1;
+          cursor: pointer;
+        }
+
+        .share-platform-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 8px;
+        }
+
+        .share-platform-grid button {
+          min-height: 44px;
+          border: 2px solid #e2e8f0;
+          border-radius: 12px;
+          background: #ffffff;
+          color: #334155;
+          font-size: 14px;
+          font-weight: 800;
+          cursor: pointer;
+        }
+
+        @media (min-width: 720px) {
+          .result-screen-container {
+            padding-top: 26px;
+          }
+
+          .ending-center-panel {
+            left: 8%;
+            right: 8%;
+            top: 25%;
+            padding: 18px 22px;
+          }
+
+          .chart-layout {
+            grid-template-columns: 1fr 0.95fr;
+            gap: 8px;
+          }
+
+          .radar-box {
+            min-height: 250px;
+          }
+
+          .bar-row {
+            grid-template-columns: 62px 1fr 42px;
+          }
+
+          .bar-label,
+          .bar-percent,
+          .ending-summary {
+            font-size: 13px;
+          }
         }
       `}</style>
     </div>
