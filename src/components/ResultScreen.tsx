@@ -322,6 +322,8 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
           width: 100%;
           height: 100%;
           overflow-y: auto;
+          overscroll-behavior: contain;
+          -webkit-overflow-scrolling: touch;
           padding: 18px 14px 34px;
           display: flex;
           flex-direction: column;
@@ -338,7 +340,6 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
         .ending-card {
           position: relative;
           width: min(100%, 560px);
-          aspect-ratio: 2 / 3;
           overflow: hidden;
           border-radius: 18px;
           background: #ffffff;
@@ -346,11 +347,9 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
         }
 
         .ending-bg {
-          position: absolute;
-          inset: 0;
+          display: block;
           width: 100%;
-          height: 100%;
-          object-fit: cover;
+          height: auto;
           user-select: none;
         }
 
